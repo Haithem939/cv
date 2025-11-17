@@ -3,119 +3,151 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Attrape le Carré</title>
+<title>Attrape le Carré – Version Améliorée</title>
 
 <style>
   body {
-    background: linear-gradient(135deg, #1b2735, #090a0f);
-    height: 100vh;
     margin: 0;
+    height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: Arial, sans-serif;
-    overflow: hidden;
+    font-family: "Poppins", sans-serif;
     color: white;
+    overflow: hidden;
+
+    /* BACKGROUND ANIMÉ */
+    background: radial-gradient(circle at 20% 20%, #1a1f3c, #090a0f);
+    animation: bgMove 12s infinite alternate ease-in-out;
   }
 
-  #game-container {
+  @keyframes bgMove {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
+  }
+
+  #game {
     position: relative;
     width: 90vw;
     height: 80vh;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    border-radius: 14px;
+    border-radius: 20px;
+    border: 2px solid rgba(255,255,255,0.15);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(8px);
     overflow: hidden;
+    box-shadow: 0 0 25px rgba(255,255,255,0.08);
   }
 
+  /* carré rouge amélioré */
   #carre {
-    width: 60px;
-    height: 60px;
-    background: #ff4e4e;
+    width: 70px;
+    height: 70px;
+    background: #ff3b3b;
+    border-radius: 15px;
     position: absolute;
-    border-radius: 10px;
     cursor: pointer;
-    transition: transform 0.2s ease;
+    animation: rotate 1.2s linear infinite;
+    box-shadow: 0 0 25px rgba(255, 60, 60, 0.8);
+    transition: transform 0.15s ease;
   }
 
-  #carre:active {
-    transform: scale(0.9);
+  @keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
   }
 
   #score {
+    font-size: 1.7rem;
     position: absolute;
-    top: 15px;
+    top: 20px;
     left: 20px;
-    font-size: 1.5rem;
-    font-weight: bold;
+    font-weight: 600;
+    text-shadow: 0 0 10px rgba(255,255,255,0.6);
   }
 
   #citation {
     position: absolute;
-    bottom: 15px;
+    bottom: 20px;
     width: 100%;
     text-align: center;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     opacity: 0;
-    transition: opacity 0.5s ease-in-out;
+    transition: opacity 0.8s ease-in-out;
   }
 </style>
 
 </head>
 <body>
 
-<div id="game-container">
+<div id="game">
   <div id="score">Score : 0</div>
   <div id="carre"></div>
   <div id="citation"></div>
 </div>
 
 <script>
+  const game = document.getElementById("game");
   const carre = document.getElementById("carre");
   const scoreEl = document.getElementById("score");
   const citationEl = document.getElementById("citation");
-  const container = document.getElementById("game-container");
+
   let score = 0;
 
   const citations = [
-    "« Le succès est la somme de petits efforts répétés chaque jour. »",
-    "« Tu es plus fort que tu ne le penses. »",
-    "« Chaque progrès commence par une petite action. »",
-    "« La persévérance finit toujours par gagner. »",
-    "« Continue. Même lentement, tu avances. »",
-    "« Aujourd’hui est une bonne journée pour essayer. »",
-    "« Tu n’échoues jamais, tu apprends. »"
+    "« Avance un peu chaque jour. »",
+    "« Tu es plus capable que tu ne le crois. »",
+    "« Continue, tu t'améliores déjà. »",
+    "« Aujourd’hui, tu gagnes encore. »",
+    "« Rien n’arrête quelqu’un qui persévère. »",
+    "« Tu écris ton propre niveau. »",
+    "« Chaque clic est une victoire. »"
   ];
 
-  function nouvellePosition() {
-    const maxX = container.clientWidth - carre.clientWidth;
-    const maxY = container.clientHeight - carre.clientHeight;
+  // vitesse du carré
+  let vx = 3;
+  let vy = 3;
 
-    const x = Math.random() * maxX;
-    const y = Math.random() * maxY;
+  // Position initiale
+  let x = 50;
+  let y = 50;
+
+  function deplacerCarre() {
+    const maxX = game.clientWidth - carre.clientWidth;
+    const maxY = game.clientHeight - carre.clientHeight;
+
+    x += vx;
+    y += vy;
+
+    // rebonds
+    if (x <= 0 || x >= maxX) vx *= -1;
+    if (y <= 0 || y >= maxY) vy *= -1;
 
     carre.style.left = x + "px";
     carre.style.top = y + "px";
+
+    requestAnimationFrame(deplacerCarre);
   }
 
-  function nouvelleCitation() {
-    const texte = citations[Math.floor(Math.random() * citations.length)];
-    citationEl.textContent = texte;
+  // clique sur le carré
+  carre.addEventListener("click", () => {
+    score++;
+    scoreEl.textContent = "Score : " + score;
+
+    // légère augmentation de la vitesse = plus dur
+    vx *= 1.05;
+    vy *= 1.05;
+
+    // nouvelle citation
+    const citation = citations[Math.floor(Math.random() * citations.length)];
+    citationEl.textContent = citation;
     citationEl.style.opacity = 1;
 
     setTimeout(() => {
       citationEl.style.opacity = 0;
-    }, 2000);
-  }
-
-  carre.addEventListener("click", () => {
-    score++;
-    scoreEl.textContent = "Score : " + score;
-    nouvellePosition();
-    nouvelleCitation();
+    }, 1800);
   });
 
-  // Position initiale
-  nouvellePosition();
+  deplacerCarre();
 </script>
 
 </body>
