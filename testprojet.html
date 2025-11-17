@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Catch the Square – Smooth Version</title>
+<title>Catch the Square</title>
 
 <style>
     body {
         margin: 0;
-        background: linear-gradient(135deg, #0f0f0f, #1d1d35, #362244);
-        font-family: "Poppins", sans-serif;
+        background: #1a1a1a;
+        font-family: Arial, sans-serif;
         height: 100vh;
         display: flex;
         justify-content: center;
@@ -18,50 +18,35 @@
         color: white;
     }
 
-    /* Grand carré */
+    /* Zone de jeu */
     #gameZone {
-        width: 450px;
-        height: 450px;
-        background: rgba(255, 255, 255, 0.04);
+        width: 400px;
+        height: 400px;
+        background: rgba(255, 255, 255, 0.06);
         border: 2px solid rgba(255, 255, 255, 0.2);
-        border-radius: 25px;
-        box-shadow: 0 0 30px rgba(255,255,255,0.1);
+        border-radius: 15px;
         position: relative;
-        overflow: hidden;
-        animation: rotateBg 12s linear infinite;
     }
 
-    /* Animation interne du grand carré */
-    @keyframes rotateBg {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-
-    /* Petit carré à attraper */
+    /* Carré rouge */
     #target {
         width: 40px;
         height: 40px;
-        background: #ff2d2d;
+        background: red;
         position: absolute;
-        border-radius: 8px;
-        animation: spin 2s linear infinite;
+        border-radius: 5px;
         cursor: pointer;
     }
 
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-
-    /* Texte citation */
+    /* Citation */
     #citationBox {
         position: absolute;
-        bottom: -80px;
+        bottom: -60px;
         width: 100%;
         text-align: center;
-        font-size: 18px;
         opacity: 0;
-        transition: 0.5s;
+        transition: 0.4s;
+        font-size: 18px;
     }
 </style>
 </head>
@@ -73,61 +58,48 @@
     <div id="citationBox"></div>
 </div>
 
-<!-- 🎵 Musique : tu mets ton Kehlani Remix ici -->
-<audio id="bgMusic" autoplay loop>
-    <source src="kehlani-remix.mp3" type="audio/mp3">
-</audio>
-
 <script>
     const gameZone = document.getElementById("gameZone");
     const target = document.getElementById("target");
     const citationBox = document.getElementById("citationBox");
-    const music = document.getElementById("bgMusic");
 
-    // Citations motivantes
     const citations = [
-        "« Crois en toi, même quand personne ne regarde. »",
-        "« Le progrès commence toujours par un premier pas. »",
-        "« Tu es plus capable que tu ne le penses. »",
-        "« Chaque jour est une nouvelle chance. »",
-        "« Avance doucement, mais avance. »"
+        "« La discipline bat le talent, quand le talent ne se discipline pas. »",
+        "« Avance un peu chaque jour. Même un petit pas compte. »",
+        "« Tu deviens ce que tu répètes. »",
+        "« Le futur appartient à ceux qui se lèvent. »"
     ];
 
-    // Déplacement plus doux
+    // Carré rouge se déplace plus doucement
     function moveTarget() {
-        const zoneW = gameZone.clientWidth - 40;
-        const zoneH = gameZone.clientHeight - 40;
+        const maxX = gameZone.clientWidth - 40;
+        const maxY = gameZone.clientHeight - 40;
 
-        const x = Math.random() * zoneW;
-        const y = Math.random() * zoneH;
+        const x = Math.random() * maxX;
+        const y = Math.random() * maxY;
 
         target.style.left = x + "px";
         target.style.top = y + "px";
     }
 
     moveTarget();
-    setInterval(moveTarget, 1500); // mouvement plus lent et fluide
+    setInterval(moveTarget, 1200); // déplacement plus doux
 
-    // Lorsqu'on attrape le carré
+    // Quand on attrape le carré
     target.addEventListener("click", () => {
-        const randomCitation = citations[Math.floor(Math.random() * citations.length)];
+        const citation = citations[Math.floor(Math.random() * citations.length)];
+        citationBox.textContent = citation;
 
-        citationBox.textContent = randomCitation;
         citationBox.style.opacity = 1;
-        citationBox.style.bottom = "20px";
+        citationBox.style.bottom = "10px";
 
         setTimeout(() => {
             citationBox.style.opacity = 0;
-            citationBox.style.bottom = "-80px";
+            citationBox.style.bottom = "-60px";
         }, 2000);
 
         moveTarget();
     });
-
-    // Lecture automatique musique (certains navigateurs demandent une interaction)
-    document.body.addEventListener("click", () => {
-        music.play();
-    }, { once: true });
 </script>
 
 </body>
