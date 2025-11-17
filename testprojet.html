@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Attrape le Carré – Version Améliorée</title>
+<title>Attrape le Carré – Version Premium</title>
 
 <style>
   body {
@@ -16,39 +16,55 @@
     color: white;
     overflow: hidden;
 
-    /* BACKGROUND ANIMÉ */
-    background: radial-gradient(circle at 20% 20%, #1a1f3c, #090a0f);
-    animation: bgMove 12s infinite alternate ease-in-out;
+    /* FOND GALAXIE ANIMÉ + BRILLANT */
+    background: radial-gradient(circle at 20% 20%, #1d1f3b, #0a0b14, #000);
+    animation: bgShift 15s infinite alternate ease-in-out;
   }
 
-  @keyframes bgMove {
+  @keyframes bgShift {
     0% { background-position: 0% 0%; }
     100% { background-position: 100% 100%; }
+  }
+
+  /* LÉGERS POINTS ÉTOILES */
+  .stars {
+    position: fixed;
+    width: 2px;
+    height: 2px;
+    background: white;
+    opacity: 0.8;
+    border-radius: 50%;
+    animation: starMove 6s linear infinite;
+  }
+
+  @keyframes starMove {
+    from { transform: translateY(0); }
+    to { transform: translateY(-100vh); }
   }
 
   #game {
     position: relative;
     width: 90vw;
     height: 80vh;
-    border-radius: 20px;
+    border-radius: 22px;
     border: 2px solid rgba(255,255,255,0.15);
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(10px);
     overflow: hidden;
-    box-shadow: 0 0 25px rgba(255,255,255,0.08);
+    box-shadow: 0 0 30px rgba(255,255,255,0.08);
   }
 
-  /* carré rouge amélioré */
+  /* CARRÉ PLUS BEAU + DOUX + GLOW */
   #carre {
     width: 70px;
     height: 70px;
-    background: #ff3b3b;
-    border-radius: 15px;
+    background: #ff4040;
     position: absolute;
+    border-radius: 15px;
     cursor: pointer;
-    animation: rotate 1.2s linear infinite;
-    box-shadow: 0 0 25px rgba(255, 60, 60, 0.8);
-    transition: transform 0.15s ease;
+    box-shadow: 0 0 30px rgba(255, 60, 60, 0.8);
+    animation: rotate 2s linear infinite;
+    transition: transform 0.2s, box-shadow 0.3s;
   }
 
   @keyframes rotate {
@@ -57,20 +73,20 @@
   }
 
   #score {
-    font-size: 1.7rem;
+    font-size: 1.8rem;
     position: absolute;
     top: 20px;
     left: 20px;
     font-weight: 600;
-    text-shadow: 0 0 10px rgba(255,255,255,0.6);
+    text-shadow: 0 0 12px rgba(255,255,255,0.6);
   }
 
   #citation {
     position: absolute;
-    bottom: 20px;
+    bottom: 25px;
     width: 100%;
     text-align: center;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     opacity: 0;
     transition: opacity 0.8s ease-in-out;
   }
@@ -79,75 +95,101 @@
 </head>
 <body>
 
+<!-- étoiles (générées par JS aussi) -->
+<div id="star-container"></div>
+
 <div id="game">
   <div id="score">Score : 0</div>
   <div id="carre"></div>
   <div id="citation"></div>
 </div>
 
+<!-- MUSIQUE DE FOND -->
+<audio id="bgMusic" autoplay loop>
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_4b2e63dba4.mp3?filename=cosmic-ambient-110397.mp3" type="audio/mpeg">
+</audio>
+
+<!-- SON CLIC -->
+<audio id="clickSound">
+  <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_5fa9a56b97.mp3?filename=click-124467.mp3" type="audio/mpeg">
+</audio>
+
 <script>
   const game = document.getElementById("game");
   const carre = document.getElementById("carre");
   const scoreEl = document.getElementById("score");
   const citationEl = document.getElementById("citation");
+  const clickSound = document.getElementById("clickSound");
 
   let score = 0;
 
   const citations = [
-    "« Avance un peu chaque jour. »",
-    "« Tu es plus capable que tu ne le crois. »",
-    "« Continue, tu t'améliores déjà. »",
+    "« Continue, tu brilles déjà. »",
+    "« Chaque clic te rend meilleur. »",
+    "« Tu progresses à ton rythme. »",
+    "« Tu es plus fort que tu ne le crois. »",
+    "« Rien n’arrête quelqu’un qui continue. »",
     "« Aujourd’hui, tu gagnes encore. »",
-    "« Rien n’arrête quelqu’un qui persévère. »",
-    "« Tu écris ton propre niveau. »",
-    "« Chaque clic est une victoire. »"
+    "« Tu écris ton propre rythme. »"
   ];
 
-  // vitesse du carré
-  let vx = 3;
-  let vy = 3;
+  /* MOUVEMENT PLUS LENT ET FLUIDE */
+  let vx = 1.5;
+  let vy = 1.5;
 
-  // Position initiale
-  let x = 50;
-  let y = 50;
+  let x = 100;
+  let y = 100;
 
-  function deplacerCarre() {
+  function moveSquare() {
     const maxX = game.clientWidth - carre.clientWidth;
     const maxY = game.clientHeight - carre.clientHeight;
 
     x += vx;
     y += vy;
 
-    // rebonds
     if (x <= 0 || x >= maxX) vx *= -1;
     if (y <= 0 || y >= maxY) vy *= -1;
 
     carre.style.left = x + "px";
     carre.style.top = y + "px";
 
-    requestAnimationFrame(deplacerCarre);
+    requestAnimationFrame(moveSquare);
   }
 
-  // clique sur le carré
   carre.addEventListener("click", () => {
+    clickSound.currentTime = 0;
+    clickSound.play();
+
     score++;
     scoreEl.textContent = "Score : " + score;
 
-    // légère augmentation de la vitesse = plus dur
-    vx *= 1.05;
-    vy *= 1.05;
+    // petite accélération mais très douce
+    vx *= 1.02;
+    vy *= 1.02;
 
-    // nouvelle citation
     const citation = citations[Math.floor(Math.random() * citations.length)];
     citationEl.textContent = citation;
     citationEl.style.opacity = 1;
 
     setTimeout(() => {
       citationEl.style.opacity = 0;
-    }, 1800);
+    }, 2000);
   });
 
-  deplacerCarre();
+  moveSquare();
+
+
+  /* ÉTOILES ANIMÉES */
+  const starContainer = document.getElementById("star-container");
+  for (let i = 0; i < 40; i++) {
+    const star = document.createElement("div");
+    star.classList.add("stars");
+    star.style.left = Math.random() * 100 + "vw";
+    star.style.top = Math.random() * 100 + "vh";
+    star.style.opacity = Math.random();
+    star.style.animationDuration = (4 + Math.random() * 4) + "s";
+    starContainer.appendChild(star);
+  }
 </script>
 
 </body>
