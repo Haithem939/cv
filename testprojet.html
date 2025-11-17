@@ -1,195 +1,133 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Attrape le Carré – Version Premium</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Catch the Square – Smooth Version</title>
 
 <style>
-  body {
-    margin: 0;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: "Poppins", sans-serif;
-    color: white;
-    overflow: hidden;
+    body {
+        margin: 0;
+        background: linear-gradient(135deg, #0f0f0f, #1d1d35, #362244);
+        font-family: "Poppins", sans-serif;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        color: white;
+    }
 
-    /* FOND GALAXIE ANIMÉ + BRILLANT */
-    background: radial-gradient(circle at 20% 20%, #1d1f3b, #0a0b14, #000);
-    animation: bgShift 15s infinite alternate ease-in-out;
-  }
+    /* Grand carré */
+    #gameZone {
+        width: 450px;
+        height: 450px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 25px;
+        box-shadow: 0 0 30px rgba(255,255,255,0.1);
+        position: relative;
+        overflow: hidden;
+        animation: rotateBg 12s linear infinite;
+    }
 
-  @keyframes bgShift {
-    0% { background-position: 0% 0%; }
-    100% { background-position: 100% 100%; }
-  }
+    /* Animation interne du grand carré */
+    @keyframes rotateBg {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
 
-  /* LÉGERS POINTS ÉTOILES */
-  .stars {
-    position: fixed;
-    width: 2px;
-    height: 2px;
-    background: white;
-    opacity: 0.8;
-    border-radius: 50%;
-    animation: starMove 6s linear infinite;
-  }
+    /* Petit carré à attraper */
+    #target {
+        width: 40px;
+        height: 40px;
+        background: #ff2d2d;
+        position: absolute;
+        border-radius: 8px;
+        animation: spin 2s linear infinite;
+        cursor: pointer;
+    }
 
-  @keyframes starMove {
-    from { transform: translateY(0); }
-    to { transform: translateY(-100vh); }
-  }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
 
-  #game {
-    position: relative;
-    width: 90vw;
-    height: 80vh;
-    border-radius: 22px;
-    border: 2px solid rgba(255,255,255,0.15);
-    background: rgba(255, 255, 255, 0.04);
-    backdrop-filter: blur(10px);
-    overflow: hidden;
-    box-shadow: 0 0 30px rgba(255,255,255,0.08);
-  }
-
-  /* CARRÉ PLUS BEAU + DOUX + GLOW */
-  #carre {
-    width: 70px;
-    height: 70px;
-    background: #ff4040;
-    position: absolute;
-    border-radius: 15px;
-    cursor: pointer;
-    box-shadow: 0 0 30px rgba(255, 60, 60, 0.8);
-    animation: rotate 2s linear infinite;
-    transition: transform 0.2s, box-shadow 0.3s;
-  }
-
-  @keyframes rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-
-  #score {
-    font-size: 1.8rem;
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    font-weight: 600;
-    text-shadow: 0 0 12px rgba(255,255,255,0.6);
-  }
-
-  #citation {
-    position: absolute;
-    bottom: 25px;
-    width: 100%;
-    text-align: center;
-    font-size: 1.3rem;
-    opacity: 0;
-    transition: opacity 0.8s ease-in-out;
-  }
+    /* Texte citation */
+    #citationBox {
+        position: absolute;
+        bottom: -80px;
+        width: 100%;
+        text-align: center;
+        font-size: 18px;
+        opacity: 0;
+        transition: 0.5s;
+    }
 </style>
-
 </head>
+
 <body>
 
-<!-- étoiles (générées par JS aussi) -->
-<div id="star-container"></div>
-
-<div id="game">
-  <div id="score">Score : 0</div>
-  <div id="carre"></div>
-  <div id="citation"></div>
+<div id="gameZone">
+    <div id="target"></div>
+    <div id="citationBox"></div>
 </div>
 
-<!-- MUSIQUE DE FOND -->
+<!-- 🎵 Musique : tu mets ton Kehlani Remix ici -->
 <audio id="bgMusic" autoplay loop>
-  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_4b2e63dba4.mp3?filename=cosmic-ambient-110397.mp3" type="audio/mpeg">
-</audio>
-
-<!-- SON CLIC -->
-<audio id="clickSound">
-  <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_5fa9a56b97.mp3?filename=click-124467.mp3" type="audio/mpeg">
+    <source src="kehlani-remix.mp3" type="audio/mp3">
 </audio>
 
 <script>
-  const game = document.getElementById("game");
-  const carre = document.getElementById("carre");
-  const scoreEl = document.getElementById("score");
-  const citationEl = document.getElementById("citation");
-  const clickSound = document.getElementById("clickSound");
+    const gameZone = document.getElementById("gameZone");
+    const target = document.getElementById("target");
+    const citationBox = document.getElementById("citationBox");
+    const music = document.getElementById("bgMusic");
 
-  let score = 0;
+    // Citations motivantes
+    const citations = [
+        "« Crois en toi, même quand personne ne regarde. »",
+        "« Le progrès commence toujours par un premier pas. »",
+        "« Tu es plus capable que tu ne le penses. »",
+        "« Chaque jour est une nouvelle chance. »",
+        "« Avance doucement, mais avance. »"
+    ];
 
-  const citations = [
-    "« Continue, tu brilles déjà. »",
-    "« Chaque clic te rend meilleur. »",
-    "« Tu progresses à ton rythme. »",
-    "« Tu es plus fort que tu ne le crois. »",
-    "« Rien n’arrête quelqu’un qui continue. »",
-    "« Aujourd’hui, tu gagnes encore. »",
-    "« Tu écris ton propre rythme. »"
-  ];
+    // Déplacement plus doux
+    function moveTarget() {
+        const zoneW = gameZone.clientWidth - 40;
+        const zoneH = gameZone.clientHeight - 40;
 
-  /* MOUVEMENT PLUS LENT ET FLUIDE */
-  let vx = 1.5;
-  let vy = 1.5;
+        const x = Math.random() * zoneW;
+        const y = Math.random() * zoneH;
 
-  let x = 100;
-  let y = 100;
+        target.style.left = x + "px";
+        target.style.top = y + "px";
+    }
 
-  function moveSquare() {
-    const maxX = game.clientWidth - carre.clientWidth;
-    const maxY = game.clientHeight - carre.clientHeight;
+    moveTarget();
+    setInterval(moveTarget, 1500); // mouvement plus lent et fluide
 
-    x += vx;
-    y += vy;
+    // Lorsqu'on attrape le carré
+    target.addEventListener("click", () => {
+        const randomCitation = citations[Math.floor(Math.random() * citations.length)];
 
-    if (x <= 0 || x >= maxX) vx *= -1;
-    if (y <= 0 || y >= maxY) vy *= -1;
+        citationBox.textContent = randomCitation;
+        citationBox.style.opacity = 1;
+        citationBox.style.bottom = "20px";
 
-    carre.style.left = x + "px";
-    carre.style.top = y + "px";
+        setTimeout(() => {
+            citationBox.style.opacity = 0;
+            citationBox.style.bottom = "-80px";
+        }, 2000);
 
-    requestAnimationFrame(moveSquare);
-  }
+        moveTarget();
+    });
 
-  carre.addEventListener("click", () => {
-    clickSound.currentTime = 0;
-    clickSound.play();
-
-    score++;
-    scoreEl.textContent = "Score : " + score;
-
-    // petite accélération mais très douce
-    vx *= 1.02;
-    vy *= 1.02;
-
-    const citation = citations[Math.floor(Math.random() * citations.length)];
-    citationEl.textContent = citation;
-    citationEl.style.opacity = 1;
-
-    setTimeout(() => {
-      citationEl.style.opacity = 0;
-    }, 2000);
-  });
-
-  moveSquare();
-
-
-  /* ÉTOILES ANIMÉES */
-  const starContainer = document.getElementById("star-container");
-  for (let i = 0; i < 40; i++) {
-    const star = document.createElement("div");
-    star.classList.add("stars");
-    star.style.left = Math.random() * 100 + "vw";
-    star.style.top = Math.random() * 100 + "vh";
-    star.style.opacity = Math.random();
-    star.style.animationDuration = (4 + Math.random() * 4) + "s";
-    starContainer.appendChild(star);
-  }
+    // Lecture automatique musique (certains navigateurs demandent une interaction)
+    document.body.addEventListener("click", () => {
+        music.play();
+    }, { once: true });
 </script>
 
 </body>
