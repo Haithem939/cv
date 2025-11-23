@@ -75,7 +75,7 @@
     transition: opacity 0.8s ease-in-out;
   }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.37/Tone.min.js"></script>
+
 </head>
 <body>
 
@@ -85,11 +85,17 @@
   <div id="citation"></div>
 </div>
 
+<!-- 🔊 SON DE CLIC -->
+<audio id="clickSound">
+    <source src="https://cdn.pixabay.com/download/audio/2023/02/28/audio_7c0ba4d831.mp3?filename=click-146962.mp3" type="audio/mpeg">
+</audio>
+
 <script>
   const game = document.getElementById("game");
   const carre = document.getElementById("carre");
   const scoreEl = document.getElementById("score");
   const citationEl = document.getElementById("citation");
+  const clickSound = document.getElementById("clickSound");
 
   let score = 0;
 
@@ -130,6 +136,9 @@
 
   // clique sur le carré
   carre.addEventListener("click", () => {
+    clickSound.currentTime = 0;  // reset
+    clickSound.play();           // 🔊 jouer le son
+
     score++;
     scoreEl.textContent = "Score : " + score;
 
