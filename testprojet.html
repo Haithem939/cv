@@ -1,79 +1,154 @@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.37/Tone.min.js"></script>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attrape le Carré – Version Améliorée</title>
+
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Poppins", sans-serif;
+    color: white;
+    overflow: hidden;
+
+    /* BACKGROUND ANIMÉ */
+    background: radial-gradient(circle at 20% 20%, #1a1f3c, #090a0f);
+    animation: bgMove 12s infinite alternate ease-in-out;
+  }
+
+  @keyframes bgMove {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
+  }
+
+  #game {
+    position: relative;
+    width: 90vw;
+    height: 80vh;
+    border-radius: 20px;
+    border: 2px solid rgba(255,255,255,0.15);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(8px);
+    overflow: hidden;
+    box-shadow: 0 0 25px rgba(255,255,255,0.08);
+  }
+
+  /* carré rouge amélioré */
+  #carre {
+    width: 70px;
+    height: 70px;
+    background: #ff3b3b;
+    border-radius: 15px;
+    position: absolute;
+    cursor: pointer;
+    animation: rotate 1.2s linear infinite;
+    box-shadow: 0 0 25px rgba(255, 60, 60, 0.8);
+    transition: transform 0.15s ease;
+  }
+
+  @keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  #score {
+    font-size: 1.7rem;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-weight: 600;
+    text-shadow: 0 0 10px rgba(255,255,255,0.6);
+  }
+
+  #citation {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+    font-size: 1.2rem;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+  }
+</style>
+
+</head>
+<body>
+
+<div id="game">
+  <div id="score">Score : 0</div>
+  <div id="carre"></div>
+  <div id="citation"></div>
+</div>
+
 <script>
   const game = document.getElementById("game");
   const carre = document.getElementById("carre");
   const scoreEl = document.getElementById("score");
   const citationEl = document.getElementById("citation");
-  const clickSound = document.getElementById("clickSound");
 
   let score = 0;
 
   const citations = [
-    "« Continue, tu brilles déjà. »",
-    "« Chaque clic te rend meilleur. »",
-    "« Tu progresses à ton rythme. »",
-    "« Tu es plus fort que tu ne le crois. »",
-    "« Rien n’arrête quelqu’un qui continue. »",
+    "« Avance un peu chaque jour. »",
+    "« Tu es plus capable que tu ne le crois. »",
+    "« Continue, tu t'améliores déjà. »",
     "« Aujourd’hui, tu gagnes encore. »",
-    "« Tu écris ton propre rythme. »"
+    "« Rien n’arrête quelqu’un qui persévère. »",
+    "« Tu écris ton propre niveau. »",
+    "« Chaque clic est une victoire. »"
   ];
 
-  let vx = 1.5;
-  let vy = 1.5;
+  // vitesse du carré
+  let vx = 3;
+  let vy = 3;
 
-  let x = 100;
-  let y = 100;
+  // Position initiale
+  let x = 50;
+  let y = 50;
 
-  function moveSquare() {
+  function deplacerCarre() {
     const maxX = game.clientWidth - carre.clientWidth;
     const maxY = game.clientHeight - carre.clientHeight;
 
     x += vx;
     y += vy;
 
+    // rebonds
     if (x <= 0 || x >= maxX) vx *= -1;
     if (y <= 0 || y >= maxY) vy *= -1;
 
     carre.style.left = x + "px";
     carre.style.top = y + "px";
 
-    requestAnimationFrame(moveSquare);
+    requestAnimationFrame(deplacerCarre);
   }
 
+  // clique sur le carré
   carre.addEventListener("click", () => {
-    clickSound.currentTime = 0;
-    clickSound.play();
-
-    // 🎵 Son synthé Tone.js
-    const synth = new Tone.Synth().toDestination();
-    synth.triggerAttackRelease("C4", "8n");
-
     score++;
     scoreEl.textContent = "Score : " + score;
 
-    vx *= 1.02;
-    vy *= 1.02;
+    // légère augmentation de la vitesse = plus dur
+    vx *= 1.05;
+    vy *= 1.05;
 
+    // nouvelle citation
     const citation = citations[Math.floor(Math.random() * citations.length)];
     citationEl.textContent = citation;
     citationEl.style.opacity = 1;
 
     setTimeout(() => {
       citationEl.style.opacity = 0;
-    }, 2000);
+    }, 1800);
   });
 
-  moveSquare();
-
-  /* ÉTOILES ANIMÉES */
-  const starContainer = document.getElementById("star-container");
-  for (let i = 0; i < 40; i++) {
-    const star = document.createElement("div");
-    star.classList.add("stars");
-    star.style.left = Math.random() * 100 + "vw";
-    star.style.top = Math.random() * 100 + "vh";
-    star.style.opacity = Math.random();
-    star.style.animationDuration = (4 + Math.random() * 4) + "s";
-    starContainer.appendChild(star);
-  }
+  deplacerCarre();
 </script>
+
+</body>
+</html>
