@@ -87,7 +87,7 @@
 
 <!-- 🔊 SON DE CLIC -->
 <audio id="clickSound">
-    <source src="<script src="http://unpkg.com/tone"></script>">
+    <source src="https://cdn.pixabay.com/download/audio/2023/02/28/audio_7c0ba4d831.mp3?filename=click-146962.mp3" type="audio/mpeg">
 </audio>
 
 <script>
@@ -137,8 +137,7 @@
   // clique sur le carré
   carre.addEventListener("click", () => {
     clickSound.currentTime = 0;  // reset
-    clickSound.play(); const synth = new Tone.Synth().toDestination();
-synth.triggerAttackRelease("C4", "8n");      // 🔊 jouer le son
+    clickSound.play();           // 🔊 jouer le son
 
     score++;
     scoreEl.textContent = "Score : " + score;
