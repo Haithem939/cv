@@ -197,8 +197,8 @@ function deplacerCarre() {
   x += vx;
   y += vy;
 
-  if (x <= 0 || x >= maxX) vx *= +1;
-  if (y <= 0 || y >= maxY) vy *= +1;
+  if (x <= 0 || x >= maxX) vx *= -1;
+  if (y <= 0 || y >= maxY) vy *= -1;
 
   carre.style.left = x + "px";
   carre.style.top = y + "px";
@@ -219,8 +219,8 @@ carre.addEventListener("click", () => {
   citationEl.style.opacity = 1;
   setTimeout(() => { citationEl.style.opacity = 0; }, 1800);
 
-  vx *= 1.05;
-  vy *= 1.05;
+  vx *= 1.02;
+  vy *= 1.02;
 });
 
 // Lancer une partie
