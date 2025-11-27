@@ -51,7 +51,6 @@
     position: absolute;
     cursor: pointer;
     box-shadow: 0 0 25px rgba(255, 60, 60, 0.8);
-    transition: transform 0.15s ease;
   }
 
   #score, #timer {
@@ -228,11 +227,15 @@ startBtn.addEventListener("click", () => {
   score = 0;
   scoreEl.textContent = "Score: 0";
 
-  // Appliquer le niveau
+  // Réinitialisation position au centre → FIX DU BUG
+  x = game.clientWidth / 2 - 35;
+  y = game.clientHeight / 2 - 35;
+  carre.style.left = x + "px";
+  carre.style.top = y + "px";
+
   const niv = niveauSelect.value;
   setNiveau(niv);
 
-  // Appliquer les réglages manuels
   vx = Number(vitesseInput.value);
   vy = Number(vitesseInput.value);
   timer = Number(tempsInput.value);
@@ -256,7 +259,7 @@ startBtn.addEventListener("click", () => {
   }, 1000);
 });
 
-// Initialisation du niveau par défaut
+// Initialisation
 setNiveau("facile");
 deplacerCarre();
 </script>
