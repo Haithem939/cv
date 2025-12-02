@@ -25,8 +25,8 @@ graph TD
     End([Fin du Programme])
 
     %% Initialisation
-    Init[Initialisation :<br>Score = 0<br>Temps = 30 secondes]
-    SpawnRed[Faire apparaître le<br>Rond Rouge (Position aléatoire)]
+    Init[Initialisation :Score = 0Temps = 30 secondes]
+    SpawnRed[Faire apparaître le >Rond Rouge (Position aléatoire)]
 
     %% Boucle de jeu
     Wait(Attente d'une action)
@@ -39,10 +39,10 @@ graph TD
     %% Actions
     ScoreUp[Score + 1]
     MoveRed[Déplacer le Rond Rouge]
-    MissAction[Ignorer ou<br>Pénalité de temps]
+    MissAction[Ignorer ou Pénalité de temps]
     
     %% Fin de partie
-    GameOver[Afficher Écran de Fin<br>et Score Final]
+    GameOver[Afficher Écran de Fin et Score Final]
     Restart{Rejouer ?}
 
     %% Connexions
