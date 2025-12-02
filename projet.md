@@ -19,11 +19,6 @@ Par exemple, le mot “Créatif” ou “Bienvenue” tourne autour d’un logo 
 ce texte autour du centre en utilisant une animation rotate().
 
 ```mermaid
-graph TD;
-    A-->B;
-    A-->C;
-    B-->D;
-    C-->D;
 ---
 config:
   theme: redux
