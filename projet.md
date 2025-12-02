@@ -17,3 +17,11 @@ Par exemple, le mot “Créatif” ou “Bienvenue” tourne autour d’un logo 
  Résultat attendu:
  un élément central (un logo, un cercle vide, etc.), Autour, je places un texte positionné à une certaine distance du centre et je fais tourner 
 ce texte autour du centre en utilisant une animation rotate().
+
+```mermaid
+graph TD;
+    A-->B;
+    A-->C;
+    B-->D;
+    C-->D;
+```
