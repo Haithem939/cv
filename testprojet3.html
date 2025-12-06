@@ -2,146 +2,93 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Jeu du Carré Rouge</title>
+<title>Cube Catch Game</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.37/Tone.min.js"></script>
 <style>
     body {
         margin: 0;
-        background: #111;
-        font-family: Arial, sans-serif;
-        color: white;
-        display: flex;
-    }
-
-    /* ---- PANEL GAUCHE ---- */
-    #menu {
-        width: 230px;
-        background: #1e1e1e;
-        padding: 20px;
-        border-right: 2px solid #333;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-
-    #menu h2 {
-        margin: 0;
-        font-size: 20px;
-        color: white;
-    }
-
-    label {
-        color: black !important;   /* Texte en noir */
-        font-weight: bold;
-    }
-
-    select, input {
-        width: 100%;
-        padding: 8px;
-        border-radius: 5px;
-        border: none;
-        margin-top: 5px;
-    }
-
-    /* ---- ZONE DE JEU ---- */
-    #game {
-        flex-grow: 1;
-        position: relative;
         overflow: hidden;
-        height: 100vh;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #1e1e2e, #2a2a40);
+        color: white;
     }
 
-    #square {
-        width: 60px;
-        height: 60px;
+    /* Le carré rouge */
+    #cube {
+        width: 50px;
+        height: 50px;
         background: red;
         position: absolute;
-        top: 50px;
-        left: 50px;
-        border-radius: 8px;
+        border-radius: 6px;
         cursor: pointer;
         transition: transform 0.1s;
     }
 
-    #info {
+    /* Tableau de gauche (contrôles) */
+    #controls {
         position: absolute;
         top: 20px;
-        right: 20px;
-        font-size: 22px;
-        color: #fff;
+        left: 20px;
+        width: 220px;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    }
+
+    #controls h2 {
+        margin-top: 0;
+        font-size: 20px;
+        text-align: center;
+    }
+
+    /* Texte des niveaux en NOIR comme demandé */
+    #levels label {
+        display: block;
+        margin: 5px 0;
+        color: black;  /* <--- CHANGEMENT DEMANDÉ */
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    select, input {
+        width: 100%;
+        padding: 6px;
+        margin-top: 5px;
+        border-radius: 6px;
+        border: none;
+    }
+
+    #startBtn {
+        width: 100%;
+        padding: 10px;
+        margin-top: 15px;
+        background: #4caf50;
+        border: none;
+        border-radius: 6px;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    #timer, #score {
+        margin-top: 10px;
+        font-size: 18px;
+        text-align: center;
     }
 </style>
 </head>
 
 <body>
 
-<!-- 🟦 PANEL GAUCHE (toujours visible) -->
-<div id="menu">
-    <h2>⚙️ Paramètres</h2>
+<div id="controls">
+    <h2>Paramètres</h2>
 
-    <label style="color:black">Niveau :</label>
-    <select id="difficulty">
-        <option value="facile">Facile</option>
-        <option value="moyen">Moyen</option>
-        <option value="difficile">Difficile</option>
-    </select>
+    <div id="levels">
+        <label><input type="radio" name="difficulty" value="easy" checked> Facile</label>
+        <label><input type="radio" name="difficulty" value="medium"> Moyen</label>
+        <label><input type="radio" name="difficulty" value="hard"> Difficile</label>
+    </div>
 
-    <label style="color:black">Vitesse personnalisée :</label>
-    <input type="number" id="customSpeed" value="1" min="0.5" max="5" step="0.1">
-
-    <label style="color:black">Temps personnalisé (sec) :</label>
-    <input type="number" id="customTime" value="15" min="5" max="60">
-
-    <button onclick="startGame()">Démarrer</button>
-</div>
-
-<!-- 🟥 ZONE DE JEU -->
-<div id="game">
-    <div id="square"></div>
-    <div id="info">Touches : 0</div>
-</div>
-
-<!-- 🎵 SON DU CLICK -->
-<audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
-
-<script>
-    const square = document.getElementById("square");
-    const info = document.getElementById("info");
-    const clickSound = document.getElementById("clickSound");
-
-    let speed = 1;
-    let requiredHits = 3;
-    let timeLimit = 15;
-    let hits = 0;
-    let timer;
-    let moveInterval;
-
-    // -----------------------
-    // Déplacements du carré
-    // -----------------------
-    function moveSquare() {
-        const game = document.getElementById("game");
-        const maxX = game.clientWidth - 60;
-        const maxY = game.clientHeight - 60;
-
-        const x = Math.random() * maxX;
-        const y = Math.random() * maxY;
-
-        square.style.left = x + "px";
-        square.style.top = y + "px";
-    }
-
-    // -----------------------
-    // Lancer le jeu
-    // -----------------------
-    function startGame() {
-        clearInterval(moveInterval);
-        clearTimeout(timer);
-
-        const difficulty = document.getElementById("difficulty").value;
-        const customSpeed = parseFloat(document.getElementById("customSpeed").value);
-        const customTime = parseInt(document.getElementById("customTime").value);
-
-        // Difficultés
-        if (difficulty === "facile") {
-            requiredHits = 3;
-            speed = 1;
+    <label>Vitesse personnali
