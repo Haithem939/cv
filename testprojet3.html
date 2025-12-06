@@ -2,304 +2,146 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Attrape le Carré – Niveaux & Chrono</title>
-
+<title>Jeu du Carré Rouge</title>
 <style>
-/* ---------------------- GLOBAL ---------------------- */
-body {
-  margin: 0;
-  font-family: "Poppins", sans-serif;
-  background: linear-gradient(130deg, #0a0f1f, #111a2f, #0a0f1f);
-  background-size: 300% 300%;
-  animation: bgMove 12s infinite alternate;
-  display: flex;
-  color: white;
-}
+    body {
+        margin: 0;
+        background: #111;
+        font-family: Arial, sans-serif;
+        color: white;
+        display: flex;
+    }
 
-@keyframes bgMove {
-  0% { background-position: 0% 30%; }
-  100% { background-position: 80% 70%; }
-}
+    /* ---- PANEL GAUCHE ---- */
+    #menu {
+        width: 230px;
+        background: #1e1e1e;
+        padding: 20px;
+        border-right: 2px solid #333;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
 
-/* ---------------------- PANNEAU DE CONTROLE ---------------------- */
-#controls {
-  width: 270px;
-  padding: 20px;
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 0 25px rgba(0,0,0,0.4);
-  border-right: 1px solid rgba(255,255,255,0.1);
-  display: flex;
-  flex-direction: column;
-  gap: 17px;
-}
+    #menu h2 {
+        margin: 0;
+        font-size: 20px;
+        color: white;
+    }
 
-#controls h3 {
-  font-size: 1.4rem;
-  text-align: center;
-  color: #61c6ff;
-  text-shadow: 0 0 12px #61c6ff;
-}
+    label {
+        color: black !important;   /* Texte en noir */
+        font-weight: bold;
+    }
 
-label {
-  font-size: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
+    select, input {
+        width: 100%;
+        padding: 8px;
+        border-radius: 5px;
+        border: none;
+        margin-top: 5px;
+    }
 
-select, input[type=number] {
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  outline: none;
-  background: rgba(255,255,255,0.15);
-  color: white;
-}
+    /* ---- ZONE DE JEU ---- */
+    #game {
+        flex-grow: 1;
+        position: relative;
+        overflow: hidden;
+        height: 100vh;
+    }
 
-/* ---------------------- BOUTON START ---------------------- */
-button {
-  padding: 12px;
-  font-size: 1.1rem;
-  cursor: pointer;
-  border-radius: 10px;
-  border: none;
-  background: linear-gradient(45deg, #ff4d4d, #ff2626);
-  color: white;
-  font-weight: 600;
-  letter-spacing: 1px;
-  box-shadow: 0 0 15px rgba(255,60,60,0.5);
-  transition: 0.25s;
-}
+    #square {
+        width: 60px;
+        height: 60px;
+        background: red;
+        position: absolute;
+        top: 50px;
+        left: 50px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.1s;
+    }
 
-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 22px rgba(255,80,80,0.9);
-}
-
-/* ---------------------- ZONE DE JEU ---------------------- */
-#game-container {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-#game {
-  position: relative;
-  width: 90vw;
-  height: 80vh;
-  border-radius: 25px;
-  border: 2px solid rgba(255,255,255,0.18);
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(7px);
-  overflow: hidden;
-  box-shadow: 0 0 40px rgba(255,255,255,0.06);
-}
-
-/* ---------------------- CARRE ---------------------- */
-#carre {
-  width: 70px;
-  height: 70px;
-  background: #ff3333;
-  border-radius: 12px;
-  position: absolute;
-  cursor: pointer;
-  box-shadow: 0 0 25px rgba(255, 60, 60, 0.9), 0 0 45px rgba(255, 0, 0, 0.4);
-  animation: pulse 1.6s infinite alternate;
-  transition: 0.15s;
-}
-
-@keyframes pulse {
-  from { transform: scale(1); }
-  to { transform: scale(1.15); }
-}
-
-/* ---------------------- SCORE + TIMER ---------------------- */
-#score, #timer {
-  position: absolute;
-  font-size: 1.6rem;
-  font-weight: 600;
-  color: #89d4ff;
-  text-shadow: 0 0 12px #2db7ff;
-}
-
-#score { top: 12px; left: 20px; }
-#timer { top: 12px; right: 20px; }
-
-/* ---------------------- CITATION ---------------------- */
-#citation {
-  position: absolute;
-  bottom: 30px;
-  width: 100%;
-  text-align: center;
-  font-size: 1.3rem;
-  opacity: 0;
-  color: #ffb3b3;
-  text-shadow: 0 0 15px #ff8080;
-  transition: opacity 0.8s ease-in-out;
-}
+    #info {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 22px;
+        color: #fff;
+    }
 </style>
 </head>
 
 <body>
 
-<!-- ---------------------- CONTROLES ---------------------- -->
-<div id="controls">
-  <h3>🎮 Contrôles</h3>
+<!-- 🟦 PANEL GAUCHE (toujours visible) -->
+<div id="menu">
+    <h2>⚙️ Paramètres</h2>
 
-  <label>Niveau :
-    <select id="niveau">
-      <option value="facile">Facile</option>
-      <option value="moyen">Moyen</option>
-      <option value="difficile">Difficile</option>
+    <label style="color:black">Niveau :</label>
+    <select id="difficulty">
+        <option value="facile">Facile</option>
+        <option value="moyen">Moyen</option>
+        <option value="difficile">Difficile</option>
     </select>
-  </label>
 
-  <label>Vitesse manuelle :
-    <input type="number" id="vitesseControl" min="1" max="20" value="3">
-  </label>
+    <label style="color:black">Vitesse personnalisée :</label>
+    <input type="number" id="customSpeed" value="1" min="0.5" max="5" step="0.1">
 
-  <label>Temps (sec) :
-    <input type="number" id="tempsControl" min="5" max="60" value="15">
-  </label>
+    <label style="color:black">Temps personnalisé (sec) :</label>
+    <input type="number" id="customTime" value="15" min="5" max="60">
 
-  <button id="startBtn">🚀 Démarrer</button>
-
-  <p id="niveauInfo"></p>
+    <button onclick="startGame()">Démarrer</button>
 </div>
 
-<!-- ---------------------- JEU ---------------------- -->
-<div id="game-container">
-  <div id="game">
-    <div id="score">Score : 0</div>
-    <div id="timer">Temps : 0</div>
-    <div id="carre"></div>
-    <div id="citation"></div>
-  </div>
+<!-- 🟥 ZONE DE JEU -->
+<div id="game">
+    <div id="square"></div>
+    <div id="info">Touches : 0</div>
 </div>
 
-<audio id="clickSound">
-  <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_5fa9a56b97.mp3?filename=click-124467.mp3" type="audio/mpeg">
-</audio>
+<!-- 🎵 SON DU CLICK -->
+<audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
 
 <script>
-/* ------------- VARIABLES ---------------- */
-const game = document.getElementById("game");
-const carre = document.getElementById("carre");
-const scoreEl = document.getElementById("score");
-const timerEl = document.getElementById("timer");
-const citationEl = document.getElementById("citation");
-const clickSound = document.getElementById("clickSound");
-const niveauSelect = document.getElementById("niveau");
-const vitesseInput = document.getElementById("vitesseControl");
-const tempsInput = document.getElementById("tempsControl");
-const startBtn = document.getElementById("startBtn");
-const niveauInfo = document.getElementById("niveauInfo");
+    const square = document.getElementById("square");
+    const info = document.getElementById("info");
+    const clickSound = document.getElementById("clickSound");
 
-const citations = [
-  "Continue, tu brilles ✨",
-  "Chaque clic te rend meilleur 💪",
-  "Tu progresses !",
-  "Tu es plus fort que tu ne le crois 🔥",
-  "Rien ne t’arrête.",
-  "Encore un clic ! 💥",
-  "Tu es dans le flow 😎"
-];
+    let speed = 1;
+    let requiredHits = 3;
+    let timeLimit = 15;
+    let hits = 0;
+    let timer;
+    let moveInterval;
 
-let vx = 3, vy = 3;
-let x = 50, y = 50;
-let score = 0;
-let timer = 0;
-let clicksRequis = 0;
-let countdown;
+    // -----------------------
+    // Déplacements du carré
+    // -----------------------
+    function moveSquare() {
+        const game = document.getElementById("game");
+        const maxX = game.clientWidth - 60;
+        const maxY = game.clientHeight - 60;
 
-/* ------------- NIVEAUX ---------------- */
-function setNiveau(niv) {
-  if (niv === "facile") { vx = vy = 3; timer = 15; clicksRequis = 3; }
-  if (niv === "moyen") { vx = vy = 5; timer = 25; clicksRequis = 5; }
-  if (niv === "difficile") { vx = vy = 8; timer = 35; clicksRequis = 7; }
+        const x = Math.random() * maxX;
+        const y = Math.random() * maxY;
 
-  vitesseInput.value = vx;
-  tempsInput.value = timer;
-  niveauInfo.textContent = `Objectif : ${clicksRequis} clics en ${timer}s`;
-}
-
-/* ------------- ANIMATION CARRE ---------------- */
-function deplacerCarre() {
-  const maxX = game.clientWidth - carre.clientWidth;
-  const maxY = game.clientHeight - carre.clientHeight;
-
-  x += vx;
-  y += vy;
-
-  if (x <= 0 || x >= maxX) vx *= -1;
-  if (y <= 0 || y >= maxY) vy *= -1;
-
-  carre.style.left = x + "px";
-  carre.style.top = y + "px";
-
-  requestAnimationFrame(deplacerCarre);
-}
-
-/* ------------- CLICK CARRE ---------------- */
-carre.addEventListener("click", () => {
-  clickSound.currentTime = 0;
-  clickSound.play();
-
-  score++;
-  scoreEl.textContent = "Score : " + score;
-
-  const citation = citations[Math.floor(Math.random() * citations.length)];
-  citationEl.textContent = citation;
-  citationEl.style.opacity = 1;
-  setTimeout(() => { citationEl.style.opacity = 0; }, 1500);
-
-  vx *= 1.03;
-  vy *= 1.03;
-});
-
-/* ------------- START GAME ---------------- */
-startBtn.addEventListener("click", () => {
-  score = 0;
-  scoreEl.textContent = "Score : 0";
-
-  x = game.clientWidth / 2;
-  y = game.clientHeight / 2;
-
-  carre.style.left = x + "px";
-  carre.style.top = y + "px";
-
-  const niv = niveauSelect.value;
-  setNiveau(niv);
-
-  vx = Number(vitesseInput.value);
-  vy = Number(vitesseInput.value);
-  timer = Number(tempsInput.value);
-
-  timerEl.textContent = `Temps : ${timer}s`;
-
-  clearInterval(countdown);
-  countdown = setInterval(() => {
-    timer--;
-    timerEl.textContent = `Temps : ${timer}s`;
-
-    if (timer <= 0) {
-      clearInterval(countdown);
-
-      if (score >= clicksRequis) {
-        alert("🔥 Bravo ! Niveau réussi !");
-      } else {
-        alert("⏳ Temps écoulé !");
-      }
+        square.style.left = x + "px";
+        square.style.top = y + "px";
     }
-  }, 1000);
-});
 
-setNiveau("facile");
-deplacerCarre();
-</script>
+    // -----------------------
+    // Lancer le jeu
+    // -----------------------
+    function startGame() {
+        clearInterval(moveInterval);
+        clearTimeout(timer);
 
-</body>
-</html>
+        const difficulty = document.getElementById("difficulty").value;
+        const customSpeed = parseFloat(document.getElementById("customSpeed").value);
+        const customTime = parseInt(document.getElementById("customTime").value);
+
+        // Difficultés
+        if (difficulty === "facile") {
+            requiredHits = 3;
+            speed = 1;
