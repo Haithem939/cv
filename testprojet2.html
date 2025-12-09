@@ -128,14 +128,9 @@
   </div>
 </div>
 
-  <<audio id="clickSound">
-  <source src=<script src="http://unpkg.com/tone"></script>type="audio/mpeg">
-//create a synth and connect it to the main output (your speakers)
-const synth = new Tone.Synth().toDestination();
-
-//play a middle 'C' for the duration of an 8th note
-synth.triggerAttackRelease("C4", "8n");
-
+<!-- 🔊 SON CORRECTEMENT AJOUTÉ -->
+<audio id="clickSound">
+  <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_5fa9a56b97.mp3?filename=click-124467.mp3" type="audio/mpeg">
 </audio>
 
 <script>
@@ -152,7 +147,6 @@ const tempsInput = document.getElementById("tempsControl");
 const startBtn = document.getElementById("startBtn");
 const niveauInfo = document.getElementById("niveauInfo");
 
-// Citations motivantes
 const citations = [
   "Continue, tu brilles déjà.",
   "Chaque clic te rend meilleur.",
@@ -194,7 +188,7 @@ function setNiveau(niveau) {
   niveauInfo.textContent = `Objectif : ${clicksRequis} clics en ${timer}s`;
 }
 
-// Animation du carré
+// Déplacement
 function deplacerCarre() {
   const maxX = game.clientWidth - carre.clientWidth;
   const maxY = game.clientHeight - carre.clientHeight;
@@ -211,7 +205,7 @@ function deplacerCarre() {
   requestAnimationFrame(deplacerCarre);
 }
 
-// Clic sur le carré
+// Clic
 carre.addEventListener("click", () => {
   clickSound.currentTime = 0;
   clickSound.play();
@@ -222,20 +216,22 @@ carre.addEventListener("click", () => {
   const citation = citations[Math.floor(Math.random() * citations.length)];
   citationEl.textContent = citation;
   citationEl.style.opacity = 1;
+
   setTimeout(() => { citationEl.style.opacity = 0; }, 1800);
 
   vx *= 1.02;
   vy *= 1.02;
 });
 
-// Lancer une partie
+// Start
 startBtn.addEventListener("click", () => {
   score = 0;
   scoreEl.textContent = "Score: 0";
 
-  // Réinitialisation position au centre → FIX DU BUG
+  // Réinitialisation au centre
   x = game.clientWidth / 2 - 35;
   y = game.clientHeight / 2 - 35;
+
   carre.style.left = x + "px";
   carre.style.top = y + "px";
 
@@ -265,7 +261,7 @@ startBtn.addEventListener("click", () => {
   }, 1000);
 });
 
-// Initialisation
+// Init
 setNiveau("facile");
 deplacerCarre();
 </script>
