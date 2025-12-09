@@ -128,9 +128,9 @@
   </div>
 </div>
 
-<!-- 🔊 SON CORRECTEMENT AJOUTÉ -->
+<!-- 🔊  NOUVEAU SON  -->
 <audio id="clickSound">
-  <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_5fa9a56b97.mp3?filename=click-124467.mp3" type="audio/mpeg">
+  <source src="son.mp3" type="audio/mpeg">
 </audio>
 
 <script>
@@ -205,8 +205,7 @@ function deplacerCarre() {
   requestAnimationFrame(deplacerCarre);
 }
 
-// Clic
-carre.addEventListener("click", () => {
+/* 🔊 LECTURE DU NOUVEAU SON */
   clickSound.currentTime = 0;
   clickSound.play();
 
