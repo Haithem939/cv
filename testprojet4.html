@@ -98,24 +98,6 @@ button:hover {
   box-shadow: 0 0 40px rgba(255,255,255,0.06);
 }
 
-/* ---------------------- TRAIL LUMINEUSE ---------------------- */
-.trail {
-  position: absolute;
-  width: 70px;
-  height: 70px;
-  border-radius: 12px;
-  background: rgba(255, 40, 40, 0.35);
-  filter: blur(18px);
-  pointer-events: none;
-  opacity: 1;
-  animation: fadeOut 0.7s linear forwards;
-}
-
-@keyframes fadeOut {
-  from { opacity: 0.9; transform: scale(1); }
-  to { opacity: 0; transform: scale(0.5); }
-}
-
 /* ---------------------- CARRE ---------------------- */
 #carre {
   width: 70px;
@@ -124,12 +106,7 @@ button:hover {
   border-radius: 12px;
   position: absolute;
   cursor: pointer;
-
-  /* BRILLANCE RENFORCÉE */
-  box-shadow:
-      0 0 40px rgba(255, 70, 70, 1),
-      0 0 80px rgba(255, 0, 0, 0.6);
-
+  box-shadow: 0 0 25px rgba(255, 60, 60, 0.9), 0 0 45px rgba(255, 0, 0, 0.4);
   animation: pulse 1.6s infinite alternate;
   transition: 0.15s;
 }
@@ -163,6 +140,20 @@ button:hover {
   text-shadow: 0 0 15px #ff8080;
   transition: opacity 0.8s ease-in-out;
 }
+
+/* ---------------------- COUNTDOWN ---------------------- */
+#countdown {
+  position: absolute;
+  top: 40%;
+  width: 100%;
+  font-size: 5rem;
+  text-align: center;
+  color: white;
+  text-shadow: 0 0 25px #ffffff;
+  opacity: 0;
+  transition: 0.5s;
+}
+
 </style>
 </head>
 
@@ -177,6 +168,7 @@ button:hover {
       <option value="facile">Facile</option>
       <option value="moyen">Moyen</option>
       <option value="difficile">Difficile</option>
+      <option value="hardcore">🔥 Hardcore</option>
     </select>
   </label>
 
@@ -200,6 +192,7 @@ button:hover {
     <div id="timer">Temps : 0</div>
     <div id="carre"></div>
     <div id="citation"></div>
+    <div id="countdown"></div>
   </div>
 </div>
 
@@ -214,6 +207,7 @@ const carre = document.getElementById("carre");
 const scoreEl = document.getElementById("score");
 const timerEl = document.getElementById("timer");
 const citationEl = document.getElementById("citation");
+const countdownEl = document.getElementById("countdown");
 const clickSound = document.getElementById("clickSound");
 const niveauSelect = document.getElementById("niveau");
 const vitesseInput = document.getElementById("vitesseControl");
@@ -240,24 +234,14 @@ let countdown;
 
 /* ------------- NIVEAUX ---------------- */
 function setNiveau(niv) {
-  if (niv === "facile") { vx = vy = 3; timer = 15; clicksRequis = 3; }
-  if (niv === "moyen") { vx = vy = 5; timer = 25; clicksRequis = 5; }
-  if (niv === "difficile") { vx = vy = 8; timer = 35; clicksRequis = 7; }
+  if (niv === "facile") { vx = vy = 3; timer = 15; clicksRequis = 3; carre.style.width="70px"; carre.style.height="70px"; }
+  if (niv === "moyen") { vx = vy = 5; timer = 25; clicksRequis = 5; carre.style.width="70px"; carre.style.height="70px"; }
+  if (niv === "difficile") { vx = vy = 8; timer = 35; clicksRequis = 7; carre.style.width="70px"; carre.style.height="70px"; }
+  if (niv === "hardcore") { vx = vy = 15; timer = 20; clicksRequis = 10; carre.style.width="45px"; carre.style.height="45px"; }
 
   vitesseInput.value = vx;
   tempsInput.value = timer;
   niveauInfo.textContent = `Objectif : ${clicksRequis} clics en ${timer}s`;
-}
-
-/* ------------- TRAIL LUMINEUSE ---------------- */
-function addTrail(x, y) {
-  const trail = document.createElement("div");
-  trail.classList.add("trail");
-  trail.style.left = x + "px";
-  trail.style.top = y + "px";
-  game.appendChild(trail);
-
-  setTimeout(() => trail.remove(), 700);
 }
 
 /* ------------- ANIMATION CARRE ---------------- */
@@ -274,12 +258,10 @@ function deplacerCarre() {
   carre.style.left = x + "px";
   carre.style.top = y + "px";
 
-  addTrail(x, y);
-
   requestAnimationFrame(deplacerCarre);
 }
 
-/* ------------- CLICK CARRE ---------------- */
+/* ------------------ CLICK CARRE ------------------ */
 carre.addEventListener("click", () => {
   clickSound.currentTime = 0;
   clickSound.play();
@@ -296,7 +278,26 @@ carre.addEventListener("click", () => {
   vy *= 1.03;
 });
 
-/* ------------- START GAME ---------------- */
+/* ------------------ COUNTDOWN ------------------ */
+function startCountdown(callback) {
+  let n = 3;
+  countdownEl.style.opacity = 1;
+  countdownEl.textContent = "3";
+
+  const interval = setInterval(() => {
+    n--;
+    if (n > 0) {
+      countdownEl.textContent = n;
+    } else {
+      countdownEl.textContent = "GO!";
+      setTimeout(() => { countdownEl.style.opacity = 0; }, 600);
+      clearInterval(interval);
+      callback();
+    }
+  }, 1000);
+}
+
+/* ------------------ START GAME ------------------ */
 startBtn.addEventListener("click", () => {
   score = 0;
   scoreEl.textContent = "Score : 0";
@@ -316,21 +317,23 @@ startBtn.addEventListener("click", () => {
 
   timerEl.textContent = `Temps : ${timer}s`;
 
-  clearInterval(countdown);
-  countdown = setInterval(() => {
-    timer--;
-    timerEl.textContent = `Temps : ${timer}s`;
+  startCountdown(() => {
+    clearInterval(countdown);
+    countdown = setInterval(() => {
+      timer--;
+      timerEl.textContent = `Temps : ${timer}s`;
 
-    if (timer <= 0) {
-      clearInterval(countdown);
+      if (timer <= 0) {
+        clearInterval(countdown);
 
-      if (score >= clicksRequis) {
-        alert("🔥 Bravo ! Niveau réussi !");
-      } else {
-        alert("⏳ Temps écoulé !");
+        if (score >= clicksRequis) {
+          alert("🔥 Bravo ! Niveau réussi !");
+        } else {
+          alert("⏳ Temps écoulé !");
+        }
       }
-    }
-  }, 1000);
+    }, 1000);
+  });
 });
 
 setNiveau("facile");
