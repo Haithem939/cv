@@ -106,9 +106,23 @@ button:hover {
   border-radius: 12px;
   position: absolute;
   cursor: pointer;
-  box-shadow: 0 0 25px rgba(255, 60, 60, 0.9), 0 0 45px rgba(255, 0, 0, 0.4);
+  box-shadow: 
+      0 0 25px rgba(255, 60, 60, 0.9),
+      0 0 45px rgba(255, 0, 0, 0.4);
   animation: pulse 1.6s infinite alternate;
   transition: 0.15s;
+}
+
+/* TRAÎNÉE LUMINEUSE */
+#trail {
+  width: 70px;
+  height: 70px;
+  position: absolute;
+  border-radius: 12px;
+  background: rgba(255, 0, 0, 0.35);
+  filter: blur(18px);
+  pointer-events: none;
+  z-index: -1;
 }
 
 @keyframes pulse {
@@ -146,14 +160,13 @@ button:hover {
   position: absolute;
   top: 40%;
   width: 100%;
-  font-size: 5rem;
+  font-size: 6rem;
   text-align: center;
-  color: white;
-  text-shadow: 0 0 25px #ffffff;
+  color: #ff6b6b;
+  text-shadow: 0 0 25px #ff2e2e;
   opacity: 0;
-  transition: 0.5s;
+  transition: opacity 0.3s;
 }
-
 </style>
 </head>
 
@@ -168,12 +181,12 @@ button:hover {
       <option value="facile">Facile</option>
       <option value="moyen">Moyen</option>
       <option value="difficile">Difficile</option>
-      <option value="hardcore">🔥 Hardcore</option>
+      <option value="hardcore">Hardcore 🔥</option>
     </select>
   </label>
 
   <label>Vitesse manuelle :
-    <input type="number" id="vitesseControl" min="1" max="20" value="3">
+    <input type="number" id="vitesseControl" min="1" max="25" value="3">
   </label>
 
   <label>Temps (sec) :
@@ -190,25 +203,33 @@ button:hover {
   <div id="game">
     <div id="score">Score : 0</div>
     <div id="timer">Temps : 0</div>
+
+    <div id="trail"></div>
     <div id="carre"></div>
+
     <div id="citation"></div>
     <div id="countdown"></div>
   </div>
 </div>
 
 <audio id="clickSound">
-<source src="son.mp3" type="audio/mpeg">
+  <source src="son.mp3" type="audio/mpeg">
 </audio>
 
 <script>
-/* ------------- VARIABLES ---------------- */
+
+/* --------------------- VARIABLES --------------------- */
 const game = document.getElementById("game");
 const carre = document.getElementById("carre");
+const trail = document.getElementById("trail");
+
 const scoreEl = document.getElementById("score");
 const timerEl = document.getElementById("timer");
 const citationEl = document.getElementById("citation");
 const countdownEl = document.getElementById("countdown");
+
 const clickSound = document.getElementById("clickSound");
+
 const niveauSelect = document.getElementById("niveau");
 const vitesseInput = document.getElementById("vitesseControl");
 const tempsInput = document.getElementById("tempsControl");
@@ -231,20 +252,36 @@ let score = 0;
 let timer = 0;
 let clicksRequis = 0;
 let countdown;
+let animationFrame;
 
-/* ------------- NIVEAUX ---------------- */
+/* ---------------------- NIVEAUX ---------------------- */
 function setNiveau(niv) {
-  if (niv === "facile") { vx = vy = 3; timer = 15; clicksRequis = 3; carre.style.width="70px"; carre.style.height="70px"; }
-  if (niv === "moyen") { vx = vy = 5; timer = 25; clicksRequis = 5; carre.style.width="70px"; carre.style.height="70px"; }
-  if (niv === "difficile") { vx = vy = 8; timer = 35; clicksRequis = 7; carre.style.width="70px"; carre.style.height="70px"; }
-  if (niv === "hardcore") { vx = vy = 15; timer = 59; clicksRequis = 10; carre.style.width="45px"; carre.style.height="45px"; }
+  carre.style.width = "70px";
+  carre.style.height = "70px";
+  trail.style.width = "70px";
+  trail.style.height = "70px";
+
+  if (niv === "facile") { vx = vy = 3; timer = 15; clicksRequis = 3; }
+  if (niv === "moyen") { vx = vy = 5; timer = 25; clicksRequis = 5; }
+  if (niv === "difficile") { vx = vy = 8; timer = 35; clicksRequis = 7; }
+
+  if (niv === "hardcore") {
+    vx = vy = 14;
+    timer = 18;
+    clicksRequis = 10;
+
+    carre.style.width = "45px";
+    carre.style.height = "45px";
+    trail.style.width = "45px";
+    trail.style.height = "45px";
+  }
 
   vitesseInput.value = vx;
   tempsInput.value = timer;
   niveauInfo.textContent = `Objectif : ${clicksRequis} clics en ${timer}s`;
 }
 
-/* ------------- ANIMATION CARRE ---------------- */
+/* ---------------------- DEPLACEMENT ---------------------- */
 function deplacerCarre() {
   const maxX = game.clientWidth - carre.clientWidth;
   const maxY = game.clientHeight - carre.clientHeight;
@@ -258,10 +295,14 @@ function deplacerCarre() {
   carre.style.left = x + "px";
   carre.style.top = y + "px";
 
-  requestAnimationFrame(deplacerCarre);
+  // TRAÎNÉE visible (smooth + retard léger)
+  trail.style.left = (x - vx * 3) + "px";
+  trail.style.top = (y - vy * 3) + "px";
+
+  animationFrame = requestAnimationFrame(deplacerCarre);
 }
 
-/* ------------------ CLICK CARRE ------------------ */
+/* ---------------------- CLICK CARRE ---------------------- */
 carre.addEventListener("click", () => {
   clickSound.currentTime = 0;
   clickSound.play();
@@ -274,31 +315,29 @@ carre.addEventListener("click", () => {
   citationEl.style.opacity = 1;
   setTimeout(() => { citationEl.style.opacity = 0; }, 1500);
 
-  vx *= 1.03;
-  vy *= 1.03;
+  vx *= 1.04;
+  vy *= 1.04;
 });
 
-/* ------------------ COUNTDOWN ------------------ */
-function startCountdown(callback) {
-  let n = 3;
+/* ---------------------- COMPTE À REBOURS ---------------------- */
+async function startCountdown() {
   countdownEl.style.opacity = 1;
-  countdownEl.textContent = "3";
 
-  const interval = setInterval(() => {
-    n--;
-    if (n > 0) {
-      countdownEl.textContent = n;
-    } else {
-      countdownEl.textContent = "GO!";
-      setTimeout(() => { countdownEl.style.opacity = 0; }, 600);
-      clearInterval(interval);
-      callback();
-    }
-  }, 1000);
+  for (let i = 3; i > 0; i++) {
+    countdownEl.textContent = i;
+    await new Promise(res => setTimeout(res, 900));
+  }
+
+  countdownEl.textContent = "GO!";
+  await new Promise(res => setTimeout(res, 500));
+
+  countdownEl.style.opacity = 0;
 }
 
-/* ------------------ START GAME ------------------ */
-startBtn.addEventListener("click", () => {
+/* ---------------------- START ---------------------- */
+startBtn.addEventListener("click", async () => {
+  cancelAnimationFrame(animationFrame);
+
   score = 0;
   scoreEl.textContent = "Score : 0";
 
@@ -317,23 +356,27 @@ startBtn.addEventListener("click", () => {
 
   timerEl.textContent = `Temps : ${timer}s`;
 
-  startCountdown(() => {
-    clearInterval(countdown);
-    countdown = setInterval(() => {
-      timer--;
-      timerEl.textContent = `Temps : ${timer}s`;
+  // Countdown
+  await startCountdown();
 
-      if (timer <= 0) {
-        clearInterval(countdown);
+  // Timer
+  clearInterval(countdown);
+  countdown = setInterval(() => {
+    timer--;
+    timerEl.textContent = `Temps : ${timer}s`;
 
-        if (score >= clicksRequis) {
-          alert("🔥 Bravo ! Niveau réussi !");
-        } else {
-          alert("⏳ Temps écoulé !");
-        }
+    if (timer <= 0) {
+      clearInterval(countdown);
+
+      if (score >= clicksRequis) {
+        alert("🔥 Bravo ! Niveau réussi !");
+      } else {
+        alert("⏳ Temps écoulé !");
       }
-    }, 1000);
-  });
+    }
+  }, 1000);
+
+  deplacerCarre();
 });
 
 setNiveau("facile");
