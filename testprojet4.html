@@ -1,1 +1,216 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<title>Catch The Cube Game</title>
 
+<!-- Tone.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.37/Tone.min.js"></script>
+
+<style>
+    body {
+        margin: 0;
+        background: linear-gradient(135deg, #1e1e1e, #2f2f2f);
+        font-family: Arial, sans-serif;
+        color: white;
+        overflow: hidden;
+    }
+
+    h1 {
+        text-align: center;
+        margin-top: 15px;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    #gameArea {
+        position: relative;
+        width: 100vw;
+        height: 80vh;
+        border: 3px solid white;
+        overflow: hidden;
+        margin-top: 20px;
+    }
+
+    #cube {
+        width: 50px;
+        height: 50px;
+        background: red;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 8px;
+        transition: transform 0.15s;
+        animation: rotate 1.5s linear infinite;
+        cursor: pointer;
+    }
+
+    @keyframes rotate {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    #panel {
+        position: absolute;
+        left: 20px;
+        top: 20px;
+        background: rgba(0,0,0,0.6);
+        padding: 12px;
+        border-radius: 10px;
+        width: 220px;
+        border: 2px solid white;
+    }
+
+    #panel h2 {
+        margin: 0;
+        font-size: 20px;
+        color: black; /* demandé */
+        background: white;
+        padding: 4px;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 10px;
+        margin-top: 8px;
+        background: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        color: black;
+    }
+
+    .btn:hover {
+        background: #e5e5e5;
+    }
+
+    #stats {
+        font-size: 18px;
+        margin-top: 15px;
+        text-align: center;
+    }
+</style>
+</head>
+<body>
+
+<h1>🎯 Catch The Red Cube</h1>
+
+<div id="panel">
+    <h2>Niveaux</h2>
+    <button class="btn" onclick="startLevel('easy')">Facile</button>
+    <button class="btn" onclick="startLevel('medium')">Moyen</button>
+    <button class="btn" onclick="startLevel('hard')">Difficile</button>
+</div>
+
+<div id="stats">Cliquez un niveau pour commencer</div>
+
+<div id="gameArea">
+    <div id="cube"></div>
+</div>
+
+<script>
+/* MUSIC BACKGROUND ------------------------------------------------------*/
+const music = new Audio("https://cdn.pixabay.com/audio/2024/01/18/audio_11a0f6b7d7.mp3"); 
+music.loop = true;
+music.volume = 0.4;
+
+/* CLICK SOUND ------------------------------------------------------------*/
+const clickSynth = new Tone.Synth({
+    oscillator: { type: "square" },
+    envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 0.1 }
+}).toDestination();
+
+/* GAME VARIABLES ---------------------------------------------------------*/
+const cube = document.getElementById("cube");
+const gameArea = document.getElementById("gameArea");
+const stats = document.getElementById("stats");
+
+let score = 0;
+let required = 0;
+let timeLeft = 0;
+let timerInterval;
+let cubeSpeed = 1200; 
+let playing = false;
+
+/* MOVE CUBE ---------------------------------------------------------------*/
+function moveCube() {
+    const maxX = gameArea.clientWidth - 60;
+    const maxY = gameArea.clientHeight - 60;
+
+    const x = Math.random() * maxX;
+    const y = Math.random() * maxY;
+
+    cube.style.left = x + "px";
+    cube.style.top = y + "px";
+}
+
+/* LEVEL SETTINGS ----------------------------------------------------------*/
+const levels = {
+    easy: { clicks: 3, time: 15, speed: 1400 },
+    medium: { clicks: 5, time: 20, speed: 900 },
+    hard: { clicks: 7, time: 30, speed: 550 }
+};
+
+/* START LEVEL -------------------------------------------------------------*/
+function startLevel(level) {
+    const l = levels[level];
+
+    required = l.clicks;
+    timeLeft = l.time;
+    cubeSpeed = l.speed;
+    score = 0;
+    playing = true;
+
+    stats.textContent = `Objectif: ${required} clics • Temps: ${timeLeft}s`;
+    music.play();
+
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        stats.textContent = `Objectif: ${required} • Restant: ${required-score} • Temps: ${timeLeft}s`;
+
+        if (timeLeft <= 0) endGame();
+    }, 1000);
+
+    moveCubeLoop();
+}
+
+/* CUBE AUTO-MOVE LOOP ----------------------------------------------------*/
+function moveCubeLoop() {
+    moveCube();
+    if (playing) {
+        setTimeout(moveCubeLoop, cubeSpeed);
+    }
+}
+
+/* CLICK CUBE -------------------------------------------------------------*/
+cube.addEventListener("click", async () => {
+    await Tone.start(); // IMPORTANT pour activer audio
+    clickSynth.triggerAttackRelease("C5", "8n");
+
+    if (!playing) return;
+
+    score++;
+
+    if (score >= required) endGame();
+});
+
+/* END GAME ---------------------------------------------------------------*/
+function endGame() {
+    playing = false;
+    clearInterval(timerInterval);
+
+    if (score >= required) {
+        stats.textContent = "🎉 Bravo ! Niveau réussi !";
+    } else {
+        stats.textContent = "❌ Temps écoulé ! Réessaie.";
+    }
+}
+</script>
+
+</body>
+</html>
