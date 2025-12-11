@@ -106,9 +106,9 @@ button:hover {
   border-radius: 12px;
   position: absolute;
   cursor: pointer;
-  box-shadow: 0 0 35px rgba(255, 60, 60, 1), 0 0 60px rgba(255, 0, 0, 0.5);
+  box-shadow: 0 0 25px rgba(255, 60, 60, 0.9), 0 0 45px rgba(255, 0, 0, 0.4);
   animation: pulse 1.6s infinite alternate;
-  transition: 0.1s;
+  transition: 0.15s;
 }
 
 /* Traînée lumineuse */
@@ -152,18 +152,6 @@ button:hover {
   text-shadow: 0 0 15px #ff8080;
   transition: opacity 0.8s ease-in-out;
 }
-
-/* ---------------------- COMPTE A REBOURS ---------------------- */
-#countdown {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 5rem;
-  color: #ff4d4d;
-  text-shadow: 0 0 20px #ff0000;
-  z-index: 100;
-}
 </style>
 </head>
 
@@ -201,7 +189,6 @@ button:hover {
     <div id="timer">Temps : 0</div>
     <div id="carre"></div>
     <div id="citation"></div>
-    <div id="countdown"></div>
   </div>
 </div>
 
@@ -216,7 +203,6 @@ const carre = document.getElementById("carre");
 const scoreEl = document.getElementById("score");
 const timerEl = document.getElementById("timer");
 const citationEl = document.getElementById("citation");
-const countdownEl = document.getElementById("countdown");
 const clickSound = document.getElementById("clickSound");
 const niveauSelect = document.getElementById("niveau");
 const vitesseInput = document.getElementById("vitesseControl");
@@ -239,8 +225,8 @@ let x = 50, y = 50;
 let score = 0;
 let timer = 0;
 let clicksRequis = 0;
-let countdown, gameStarted = false;
-let trailElements = [];
+let countdown;
+let gameStarted = false;
 
 /* ------------- NIVEAUX ---------------- */
 function setNiveau(niv) {
@@ -261,30 +247,22 @@ function createTrail() {
   trail.style.left = x + "px";
   trail.style.top = y + "px";
   game.appendChild(trail);
-  trailElements.push(trail);
-
-  // Supprime le trail après 0.5s
-  setTimeout(() => {
-    game.removeChild(trail);
-    trailElements.shift();
-  }, 500);
+  setTimeout(() => game.removeChild(trail), 500);
 }
 
 /* ------------- ANIMATION CARRE ---------------- */
 function deplacerCarre() {
-  if (!gameStarted) return requestAnimationFrame(deplacerCarre);
-
   const maxX = game.clientWidth - carre.offsetWidth;
   const maxY = game.clientHeight - carre.offsetHeight;
 
   x += vx;
   y += vy;
 
-  // Bordures fixes
-  if (x < 0) x = 0;
-  if (y < 0) y = 0;
-  if (x > maxX) x = maxX;
-  if (y > maxY) y = maxY;
+  // Empêche le dépassement des bords
+  if (x < 0) { x = 0; vx *= -1; }
+  if (y < 0) { y = 0; vy *= -1; }
+  if (x > maxX) { x = maxX; vx *= -1; }
+  if (y > maxY) { y = maxY; vy *= -1; }
 
   carre.style.left = x + "px";
   carre.style.top = y + "px";
@@ -311,7 +289,7 @@ carre.addEventListener("click", () => {
   vy *= 1.03;
 });
 
-/* ------------- START GAME AVEC COMPTE A REBOURS ---------------- */
+/* ------------- START GAME ---------------- */
 startBtn.addEventListener("click", () => {
   score = 0;
   scoreEl.textContent = "Score : 0";
@@ -330,34 +308,17 @@ startBtn.addEventListener("click", () => {
   timer = Number(tempsInput.value);
   timerEl.textContent = `Temps : ${timer}s`;
 
-  // Compte à rebours 3..2..1
-  let countdownValue = 3;
-  countdownEl.textContent = countdownValue;
-  countdownEl.style.opacity = 1;
-  gameStarted = false;
-  const countdownInterval = setInterval(() => {
-    countdownValue--;
-    if (countdownValue > 0) {
-      countdownEl.textContent = countdownValue;
-    } else {
-      countdownEl.textContent = "";
-      countdownEl.style.opacity = 0;
-      clearInterval(countdownInterval);
-      gameStarted = true;
-      startGameTimer();
-    }
-  }, 1000);
-});
+  gameStarted = true;
 
-/* ------------- TIMER DU JEU ---------------- */
-function startGameTimer() {
   clearInterval(countdown);
   countdown = setInterval(() => {
     timer--;
     timerEl.textContent = `Temps : ${timer}s`;
+
     if (timer <= 0) {
       clearInterval(countdown);
       gameStarted = false;
+
       if (score >= clicksRequis) {
         alert("🔥 Bravo ! Niveau réussi !");
       } else {
@@ -365,7 +326,7 @@ function startGameTimer() {
       }
     }
   }, 1000);
-}
+});
 
 /* ------------- INITIALISATION ---------------- */
 deplacerCarre();
