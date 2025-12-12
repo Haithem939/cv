@@ -151,6 +151,19 @@ button:hover {
   text-shadow: 0 0 15px #ff8080;
   transition: opacity 0.8s ease-in-out;
 }
+
+/* ---------------------- COMPTE A REBOURS ---------------------- */
+#countdown {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 5rem;
+  color: white;
+  text-shadow: 0 0 20px #61c6ff;
+  z-index: 20;
+  display: none;
+}
 </style>
 </head>
 
@@ -186,6 +199,7 @@ button:hover {
     <div id="timer">Temps : 0</div>
     <div id="carre"></div>
     <div id="citation"></div>
+    <div id="countdown">3</div>
   </div>
 </div>
 
@@ -205,6 +219,7 @@ const vitesseInput = document.getElementById("vitesseControl");
 const tempsInput = document.getElementById("tempsControl");
 const startBtn = document.getElementById("startBtn");
 const niveauInfo = document.getElementById("niveauInfo");
+const countdownEl = document.getElementById("countdown");
 
 const citations = [
 "Continue, tu brilles ✨","Chaque clic te rend meilleur 💪","Tu progresses !","Tu es plus fort que tu ne le crois 🔥",
@@ -215,83 +230,76 @@ const citations = [
 "Toujours plus fort","Tu brilles","Chaque mouvement compte","Ton effort paie","Continue comme ça"
 ];
 
-let vx = 3, vy = 3;
-let x = 0, y = 0;
-let score = 0;
-let timer = 0;
-let clicksRequis = 0;
-let countdown;
-let gameStarted = false;
+let vx=3, vy=3, x=0, y=0, score=0, timer=0, clicksRequis=0, countdown, gameStarted=false;
 
-// ------------------ Etoiles ------------------
+// Etoiles
 function createStars(count){
   for(let i=0;i<count;i++){
-    const star = document.createElement("div");
-    star.className = "star";
-    star.style.left = Math.random() * game.clientWidth + "px";
-    star.style.top = Math.random() * game.clientHeight + "px";
-    star.style.width = Math.random()*3+1+"px";
-    star.style.height = star.style.width;
+    const star=document.createElement("div");
+    star.className="star";
+    star.style.left=Math.random()*game.clientWidth+"px";
+    star.style.top=Math.random()*game.clientHeight+"px";
+    star.style.width=Math.random()*3+1+"px";
+    star.style.height=star.style.width;
     game.appendChild(star);
   }
 }
 createStars(100);
 
-// ------------------ Niveaux ------------------
+// Niveaux
 function setNiveau(niv){
   if(niv==="facile"){ vx=vy=3; timer=15; clicksRequis=3; carre.style.width="70px"; carre.style.height="70px"; }
   if(niv==="moyen"){ vx=vy=5; timer=25; clicksRequis=5; carre.style.width="70px"; carre.style.height="70px"; }
   if(niv==="difficile"){ vx=vy=8; timer=35; clicksRequis=7; carre.style.width="70px"; carre.style.height="70px"; }
   if(niv==="hardcore"){ vx=vy=15; timer=20; clicksRequis=10; carre.style.width="40px"; carre.style.height="40px"; }
 
-  vitesseInput.value = vx;
-  tempsInput.value = timer;
-  niveauInfo.textContent = `Objectif : ${clicksRequis} clics en ${timer}s`;
+  vitesseInput.value=vx;
+  tempsInput.value=timer;
+  niveauInfo.textContent=`Objectif : ${clicksRequis} clics en ${timer}s`;
 
-  // Initialiser une couleur aléatoire au début
   const r=Math.floor(Math.random()*256);
   const g=Math.floor(Math.random()*256);
   const b=Math.floor(Math.random()*256);
   carre.style.background=`rgb(${r},${g},${b})`;
 }
 
-// ------------------ Traînée ------------------
+// Traînée
 function createTrail(color){
-  const trail = document.createElement("div");
-  trail.className = "trail";
-  trail.style.left = x + "px";
-  trail.style.top = y + "px";
-  trail.style.width = carre.offsetWidth+"px";
-  trail.style.height = carre.offsetHeight+"px";
-  trail.style.background = color;
+  const trail=document.createElement("div");
+  trail.className="trail";
+  trail.style.left=x+"px";
+  trail.style.top=y+"px";
+  trail.style.width=carre.offsetWidth+"px";
+  trail.style.height=carre.offsetHeight+"px";
+  trail.style.background=color;
   game.appendChild(trail);
-  setTimeout(()=> game.removeChild(trail), 300);
+  setTimeout(()=>game.removeChild(trail),300);
 }
 
-// ------------------ Déplacement carré ------------------
+// Déplacement
 function deplacerCarre(){
   if(!gameStarted){ requestAnimationFrame(deplacerCarre); return; }
 
-  const maxX = game.clientWidth - carre.offsetWidth;
-  const maxY = game.clientHeight - carre.offsetHeight;
+  const maxX=game.clientWidth-carre.offsetWidth;
+  const maxY=game.clientHeight-carre.offsetHeight;
 
-  x += vx;
-  y += vy;
+  x+=vx;
+  y+=vy;
 
   if(x<0){ x=0; vx*=-1; }
   if(y<0){ y=0; vy*=-1; }
   if(x>maxX){ x=maxX; vx*=-1; }
   if(y>maxY){ y=maxY; vy*=-1; }
 
-  carre.style.left = x + "px";
-  carre.style.top = y + "px";
+  carre.style.left=x+"px";
+  carre.style.top=y+"px";
 
   createTrail(carre.style.background);
 
   requestAnimationFrame(deplacerCarre);
 }
 
-// ------------------ Click ------------------
+// Click
 carre.addEventListener("click", ()=>{
   clickSound.currentTime=0;
   clickSound.play();
@@ -299,12 +307,11 @@ carre.addEventListener("click", ()=>{
   score++;
   scoreEl.textContent="Score : "+score;
 
-  const citation = citations[Math.floor(Math.random()*citations.length)];
+  const citation=citations[Math.floor(Math.random()*citations.length)];
   citationEl.textContent=citation;
   citationEl.style.opacity=1;
   setTimeout(()=>{ citationEl.style.opacity=0; },1500);
 
-  // Couleur aléatoire du carré
   const r=Math.floor(Math.random()*256);
   const g=Math.floor(Math.random()*256);
   const b=Math.floor(Math.random()*256);
@@ -315,12 +322,29 @@ carre.addEventListener("click", ()=>{
   vy*=1.03;
 });
 
-// ------------------ Start ------------------
+// Start avec compte à rebours
 startBtn.addEventListener("click", ()=>{
+  countdownEl.style.display="block";
+  let count=3;
+  countdownEl.textContent=count;
+  gameStarted=false;
+
+  const countdownInterval = setInterval(()=>{
+    count--;
+    if(count>0){
+      countdownEl.textContent=count;
+    } else {
+      clearInterval(countdownInterval);
+      countdownEl.style.display="none";
+      startGame();
+    }
+  },1000);
+});
+
+function startGame(){
   score=0;
   scoreEl.textContent="Score : 0";
 
-  // Position aléatoire initiale
   x=Math.random()*(game.clientWidth-carre.offsetWidth);
   y=Math.random()*(game.clientHeight-carre.offsetHeight);
   carre.style.left=x+"px";
@@ -347,9 +371,9 @@ startBtn.addEventListener("click", ()=>{
       else{ alert("⏳ Temps écoulé !"); }
     }
   },1000);
-});
+}
 
-// ------------------ Initialisation ------------------
+// Initialisation
 deplacerCarre();
 setNiveau("facile");
 </script>
