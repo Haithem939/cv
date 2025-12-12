@@ -1,156 +1,171 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Attrape le Carré – Niveaux & Chrono</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attrape le Carré – Galaxy Mode</title>
+
 <style>
 /* ---------------------- GLOBAL ---------------------- */
 body {
   margin: 0;
   font-family: "Poppins", sans-serif;
-  background: linear-gradient(130deg, #0a0f1f, #111a2f, #0a0f1f);
-  background-size: 300% 300%;
-  animation: bgMove 12s infinite alternate;
+  background: black;
   display: flex;
   color: white;
+  overflow: hidden;
 }
-@keyframes bgMove {
-  0% { background-position: 0% 30%; }
-  100% { background-position: 80% 70%; }
+
+/* ---------------------- ÉTOILES ---------------------- */
+#stars, #stars2, #stars3 {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: -1;
+  top: 0;
+  left: 0;
+}
+
+#stars {
+  background: transparent url("data:image/svg+xml,\
+  <svg xmlns='http://www.w3.org/2000/svg' width='3' height='3'>\
+  <circle cx='1' cy='1' r='1' fill='white' />\
+  </svg>") repeat;
+  animation: animStar 100s linear infinite;
+}
+#stars2 {
+  background: transparent url("data:image/svg+xml,\
+  <svg xmlns='http://www.w3.org/2000/svg' width='2' height='2'>\
+  <circle cx='1' cy='1' r='1' fill='#a0cfff' />\
+  </svg>") repeat;
+  animation: animStar 200s linear infinite;
+}
+#stars3 {
+  background: transparent url("data:image/svg+xml,\
+  <svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'>\
+  <circle cx='0.5' cy='0.5' r='0.5' fill='#ff9bff' />\
+  </svg>") repeat;
+  animation: animStar 300s linear infinite;
+}
+
+@keyframes animStar {
+  from { transform: translateY(0); }
+  to { transform: translateY(-2000px); }
 }
 
 /* ---------------------- PANNEAU DE CONTROLE ---------------------- */
 #controls {
   width: 270px;
   padding: 20px;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.07);
   backdrop-filter: blur(12px);
-  box-shadow: 0 0 25px rgba(0,0,0,0.4);
   border-right: 1px solid rgba(255,255,255,0.1);
   display: flex;
   flex-direction: column;
   gap: 17px;
 }
+
 #controls h3 {
-  font-size: 1.4rem;
   text-align: center;
-  color: #61c6ff;
-  text-shadow: 0 0 12px #61c6ff;
+  color: #6ab7ff;
+  text-shadow: 0 0 12px #53a8ff;
 }
-label { font-size: 1rem; display:flex; flex-direction:column; gap:5px; }
+
 select, input[type=number] {
   padding: 10px;
   border-radius: 8px;
-  border: none;
-  outline: none;
   background: rgba(255,255,255,0.15);
   color: white;
+  border: none;
 }
 
-/* ---------------------- BOUTON START ---------------------- */
+/* ---------------------- BOUTON ---------------------- */
 button {
   padding: 12px;
-  font-size: 1.1rem;
-  cursor: pointer;
   border-radius: 10px;
   border: none;
   background: linear-gradient(45deg, #ff4d4d, #ff2626);
   color: white;
-  font-weight: 600;
-  letter-spacing: 1px;
-  box-shadow: 0 0 15px rgba(255,60,60,0.5);
-  transition: 0.25s;
-}
-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 22px rgba(255,80,80,0.9);
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 18px rgba(255,70,70,0.7);
 }
 
-/* ---------------------- ZONE DE JEU ---------------------- */
-#game-container { flex: 1; display: flex; justify-content: center; align-items: center; }
+/* ---------------------- JEU ---------------------- */
+#game-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 #game {
   position: relative;
   width: 90vw;
   height: 80vh;
   border-radius: 25px;
-  border: 2px solid rgba(255,255,255,0.18);
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(7px);
+  border: 2px solid rgba(255,255,255,0.25);
+  background: rgba(0,0,0,0.3);
   overflow: hidden;
-  box-shadow: 0 0 40px rgba(255,255,255,0.06);
-}
-
-/* ---------------------- ETOILES (BACK) ---------------------- */
-.star {
-  position: absolute;
-  background: white;
-  border-radius: 50%;
-  opacity: 0.8;
-  pointer-events: none;
-  filter: blur(0.6px);
-  animation: twinkle linear infinite;
-}
-@keyframes twinkle {
-  0% { opacity: 0.15; transform: translateY(0) scale(1); }
-  50% { opacity: 0.9; transform: translateY(-6px) scale(1.1); }
-  100% { opacity: 0.2; transform: translateY(0) scale(1); }
+  backdrop-filter: blur(5px);
 }
 
 /* ---------------------- CARRE ---------------------- */
 #carre {
   width: 70px;
   height: 70px;
-  background: #ff3333;
-  border-radius: 12px;
+  background: red;
+  border-radius: 10px;
   position: absolute;
-  cursor: pointer;
-  box-shadow: 0 0 25px rgba(255, 60, 60, 0.9), 0 0 45px rgba(255, 0, 0, 0.4);
-  animation: pulse 1.6s infinite alternate;
-  transition: box-shadow 0.15s, transform 0.12s;
+  transition: 0.15s;
+  box-shadow: 0 0 25px red, 0 0 60px red;
 }
-@keyframes pulse { from { transform: scale(1); } to { transform: scale(1.08); } }
 
-/* ---------------------- TRAIL (lumineuse) ---------------------- */
+/* TRAÎNÉE */
 .trail {
   position: absolute;
-  border-radius: 12px;
-  pointer-events: none;
+  width: 70px;
+  height: 70px;
+  border-radius: 10px;
   filter: blur(8px);
-  opacity: 0.6;
-  transition: opacity 0.2s;
+  opacity: 0.7;
+  pointer-events: none;
 }
 
-/* ---------------------- SCORE + TIMER ---------------------- */
+/* Texte HUD */
 #score, #timer {
   position: absolute;
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   font-weight: 600;
-  color: #89d4ff;
-  text-shadow: 0 0 12px #2db7ff;
+  text-shadow: 0 0 12px white;
 }
 #score { top: 12px; left: 20px; }
 #timer { top: 12px; right: 20px; }
 
-/* ---------------------- CITATION ---------------------- */
 #citation {
   position: absolute;
   bottom: 30px;
-  width: 100%;
   text-align: center;
-  font-size: 1.3rem;
+  width: 100%;
+  font-size: 1.2rem;
   opacity: 0;
-  color: #ffb3b3;
-  text-shadow: 0 0 15px #ff8080;
-  transition: opacity 0.8s ease-in-out;
+  transition: opacity .8s;
 }
 </style>
 </head>
+
 <body>
 
-<!-- ---------------------- CONTROLES ---------------------- -->
+<!-- ÉTOILES GALAXIE -->
+<div id="stars"></div>
+<div id="stars2"></div>
+<div id="stars3"></div>
+
+<!-- PANEL -->
 <div id="controls">
   <h3>🎮 Contrôles</h3>
+
   <label>Niveau :
     <select id="niveau">
       <option value="facile">Facile</option>
@@ -160,11 +175,11 @@ button:hover {
     </select>
   </label>
 
-  <label>Vitesse manuelle :
+  <label>Vitesse :
     <input type="number" id="vitesseControl" min="1" max="20" value="3">
   </label>
 
-  <label>Temps (sec) :
+  <label>Temps :
     <input type="number" id="tempsControl" min="5" max="60" value="15">
   </label>
 
@@ -172,7 +187,7 @@ button:hover {
   <p id="niveauInfo"></p>
 </div>
 
-<!-- ---------------------- JEU ---------------------- -->
+<!-- JEU -->
 <div id="game-container">
   <div id="game">
     <div id="score">Score : 0</div>
@@ -182,143 +197,91 @@ button:hover {
   </div>
 </div>
 
-<!-- Son clic (remplace "son.mp3" par ton fichier si besoin) -->
-<audio id="clickSound">
-  <source src="son.mp3" type="audio/mpeg">
-</audio>
-
 <script>
-/* ---------- Références DOM ---------- */
-const game = document.getElementById('game');
-const carre = document.getElementById('carre');
-const scoreEl = document.getElementById('score');
-const timerEl = document.getElementById('timer');
-const citationEl = document.getElementById('citation');
-const clickSound = document.getElementById('clickSound');
-const niveauSelect = document.getElementById('niveau');
-const vitesseInput = document.getElementById('vitesseControl');
-const tempsInput = document.getElementById('tempsControl');
-const startBtn = document.getElementById('startBtn');
-const niveauInfo = document.getElementById('niveauInfo');
+/* ---------------- VARIABLES ---------------- */
+const game = document.getElementById("game");
+const carre = document.getElementById("carre");
+const scoreEl = document.getElementById("score");
+const timerEl = document.getElementById("timer");
+const citationEl = document.getElementById("citation");
+const niveauSelect = document.getElementById("niveau");
+const vitesseInput = document.getElementById("vitesseControl");
+const tempsInput = document.getElementById("tempsControl");
+const startBtn = document.getElementById("startBtn");
+const niveauInfo = document.getElementById("niveauInfo");
 
-/* ---------- Palette de couleurs (hex) ---------- */
-const colors = [
-  '#ff5c5c', '#ff8a5c', '#ffd25c', '#fff56c', '#9fff6c',
-  '#6cffd2', '#6ce3ff', '#6ca8ff', '#6c6cff', '#b56cff',
-  '#ff6cf2', '#ff6c9b', '#ff6c7a', '#ff9b6c', '#ffb86c'
-];
-
-/* ---------- Citations (25) ---------- */
 const citations = [
-  "Continue, tu brilles déjà.",
-  "Chaque clic te rend meilleur.",
-  "Tu progresses à ton rythme.",
-  "Tu es plus fort que tu ne le crois.",
-  "Rien n’arrête quelqu’un qui continue.",
-  "Aujourd’hui, tu gagnes encore.",
-  "Tu écris ton propre rythme.",
-  "Petit pas, grand chemin.",
-  "Ta persévérance paie.",
-  "Concentre-toi sur l’action.",
-  "L’échec n’est qu’un apprentissage.",
-  "Fais-le avec passion.",
-  "La constance bat le talent.",
-  "Sois fier de toi aujourd’hui.",
-  "Chaque jour est une opportunité.",
-  "Crée, teste, recommence.",
-  "Ton effort est précieux.",
-  "Transforme l’essai.",
-  "Garde le cap.",
-  "Fais confiance au processus.",
-  "Ose sortir de ta zone.",
-  "Tu peux plus que tu penses.",
-  "Rêve grand, commence petit.",
-  "Ton travail compte.",
-  "Un clic à la fois."
+"Continue, tu vas y arriver.",
+"Tu brilles plus que tu ne le penses.",
+"Chaque clic te rapproche de ton objectif.",
+"Tu progresses à chaque instant.",
+"La réussite commence maintenant.",
+"Tu es en train d’écrire ton succès.",
+"Crois en toi, tu gères.",
+"Tu es clairement au-dessus.",
+"Ne lâche rien, tu es sur la bonne voie.",
+"Ton potentiel est énorme.",
+"Chaque seconde compte, et tu l’utilises bien.",
+"Tu surprends tout le monde.",
+"Tu deviens plus rapide, plus fort.",
+"Là tu montes en puissance.",
+"Ton énergie est incroyable.",
+"Tu es dans le flow total.",
+"Tes efforts payent déjà.",
+"Tu vas encore plus loin.",
+"Tu transformes l’impossible.",
+"Tu contrôles la situation.",
+"Encore un clic, encore une victoire.",
+"Tu surpasses ton niveau.",
+"Ta détermination est folle.",
+"Tu montes d’un cran.",
+"Tu te dépasses là.",
+"Le carré ne peut pas t’échapper.",
+"Tu es précis, rapide, puissant.",
+"Tu joues comme un pro.",
+"Tu deviens un monstre.",
+"Continue, tu vas exploser ton record."
 ];
 
-/* ---------- État du jeu ---------- */
 let vx = 3, vy = 3;
 let x = 50, y = 50;
 let score = 0;
 let timer = 0;
 let clicksRequis = 0;
-let countdown = null;
-let gameTimer = null;
 
-/* ---------- Initialisation étoiles (JS, pas d'images) ---------- */
-function createStars(n = 60) {
-  for (let i = 0; i < n; i++) {
-    const s = document.createElement('div');
-    s.className = 'star';
-    const size = 1 + Math.random() * 3; // 1px - 4px
-    s.style.width = size + 'px';
-    s.style.height = size + 'px';
-    s.style.left = Math.random() * 100 + '%';
-    s.style.top = Math.random() * 100 + '%';
-    const dur = 3 + Math.random() * 5; // 3s - 8s
-    s.style.animationDuration = dur + 's';
-    s.style.opacity = (0.2 + Math.random() * 0.8).toFixed(2);
-    game.appendChild(s);
-  }
+/* ---------------- CHANGEMENT DE COULEUR ---------------- */
+function couleurAleatoire() {
+  const r = Math.floor(Math.random()*255);
+  const g = Math.floor(Math.random()*255);
+  const b = Math.floor(Math.random()*255);
+  return `rgb(${r},${g},${b})`;
 }
 
-/* ---------- Niveaux ---------- */
-function setNiveau(niv) {
-  if (niv === 'facile') {
-    vx = vy = 3; timer = 15; clicksRequis = 3; carre.style.width = '70px'; carre.style.height = '70px';
-  }
-  if (niv === 'moyen') {
-    vx = vy = 5; timer = 25; clicksRequis = 5; carre.style.width = '70px'; carre.style.height = '70px';
-  }
-  if (niv === 'difficile') {
-    vx = vy = 8; timer = 35; clicksRequis = 7; carre.style.width = '70px'; carre.style.height = '70px';
-  }
-  if (niv === 'hardcore') {
-    vx = vy = 15; timer = 20; clicksRequis = 10; carre.style.width = '40px'; carre.style.height = '40px';
-  }
+/* ---------------- TRAÎNÉE ---------------- */
+function createTrail(color) {
+  const t = document.createElement("div");
+  t.className = "trail";
+  t.style.left = x + "px";
+  t.style.top = y + "px";
+  t.style.background = color;
+  game.appendChild(t);
+  setTimeout(()=>game.removeChild(t), 400);
+}
+
+/* ---------------- NIVEAUX ---------------- */
+function setNiveau(n) {
+  if (n=="facile") { vx=vy=3; timer=15; clicksRequis=3; carre.style.width=carre.style.height="70px"; }
+  if (n=="moyen") { vx=vy=5; timer=20; clicksRequis=5; carre.style.width=carre.style.height="70px"; }
+  if (n=="difficile") { vx=vy=8; timer=30; clicksRequis=7; carre.style.width=carre.style.height="70px"; }
+  if (n=="hardcore") { vx=vy=13; timer=20; clicksRequis=10; carre.style.width=carre.style.height="40px"; }
+
   vitesseInput.value = vx;
   tempsInput.value = timer;
+
   niveauInfo.textContent = `Objectif : ${clicksRequis} clics en ${timer}s`;
 }
 
-/* ---------- Utilitaires couleur ---------- */
-function pickColor() {
-  return colors[Math.floor(Math.random() * colors.length)];
-}
-function hexToRgba(hex, alpha = 1) {
-  const h = hex.replace('#','');
-  const bigint = parseInt(h,16);
-  const r = (bigint >> 16) & 255;
-  const g = (bigint >> 8) & 255;
-  const b = bigint & 255;
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
-
-/* ---------- Traînée : crée un élément qui suit et disparaît ---------- */
-function createTrail(color) {
-  const trail = document.createElement('div');
-  trail.className = 'trail';
-  // taille = taille du carré
-  const w = carre.offsetWidth;
-  const h = carre.offsetHeight;
-  trail.style.width = w + 'px';
-  trail.style.height = h + 'px';
-  // position centrée sur le carré
-  trail.style.left = (x) + 'px';
-  trail.style.top = (y) + 'px';
-  // couleur (avec alpha)
-  trail.style.background = hexToRgba(color, 0.45);
-  trail.style.boxShadow = `0 0 20px ${hexToRgba(color,0.6)}, 0 0 40px ${hexToRgba(color,0.35)}`;
-  game.appendChild(trail);
-  // Fade out + remove
-  setTimeout(() => {
-    trail.style.opacity = '0';
-    setTimeout(()=> { if (trail.parentNode) trail.parentNode.removeChild(trail); }, 250);
-  }, 180); // visible court instant -> trail length
-}
-
-/* ---------- Déplacement du carré (rebonds corrects, ne dépasse pas) ---------- */
+/* ---------------- MOUVEMENT ---------------- */
 function deplacerCarre() {
   const maxX = game.clientWidth - carre.offsetWidth;
   const maxY = game.clientHeight - carre.offsetHeight;
@@ -326,108 +289,68 @@ function deplacerCarre() {
   x += vx;
   y += vy;
 
-  // rebond / clamp
-  if (x <= 0) { x = 0; vx = Math.abs(vx); }
-  if (x >= maxX) { x = maxX; vx = -Math.abs(vx); }
-  if (y <= 0) { y = 0; vy = Math.abs(vy); }
-  if (y >= maxY) { y = maxY; vy = -Math.abs(vy); }
+  if (x < 0) { x=0; vx*=-1; }
+  if (y < 0) { y=0; vy*=-1; }
+  if (x > maxX) { x=maxX; vx*=-1; }
+  if (y > maxY) { y=maxY; vy*=-1; }
 
-  carre.style.left = x + 'px';
-  carre.style.top = y + 'px';
+  carre.style.left = x + "px";
+  carre.style.top = y + "px";
 
-  // create trail that matches current carre color
-  const currentBg = getComputedStyle(carre).backgroundColor;
-  // convert rgb(...) to rgba by replacing ) with ,alpha)
-  createTrail(rgbStringToHex(currentBg));
+  createTrail(carre.style.background);
 
   requestAnimationFrame(deplacerCarre);
 }
 
-/* ---------- helper to convert 'rgb(r,g,b)' or 'rgba(...)' to hex ---------- */
-function rgbStringToHex(rgbStr){
-  // accept "rgb(r,g,b)" or "rgba(r,g,b,a)"
-  const nums = rgbStr.match(/(\d+),\s*(\d+),\s*(\d+)/);
-  if(!nums) return '#ff3333';
-  const r = parseInt(nums[1]), g = parseInt(nums[2]), b = parseInt(nums[3]);
-  return '#'+[r,g,b].map(n=>n.toString(16).padStart(2,'0')).join('');
-}
-
-/* ---------- Interaction click : couleur change + son + score + citation ---------- */
-carre.addEventListener('click', () => {
-  // play audio if available
-  try { clickSound.currentTime = 0; clickSound.play(); } catch(e){ /* ignore */ }
-
-  // pick new color & apply
-  const color = pickColor(); // hex
-  carre.style.background = color;
-  // update box-shadow to match color (use rgba)
-  carre.style.boxShadow = `0 0 25px ${hexToRgba(color,0.95)}, 0 0 45px ${hexToRgba(color,0.45)}`;
-
-  // create an immediate (bigger) trail pulse so color change is obvious
-  createTrail(color);
-
-  // scoring + citation
+/* ---------------- CLIC SUR LE CARRE ---------------- */
+carre.addEventListener("click", () => {
   score++;
-  scoreEl.textContent = 'Score : ' + score;
-  const citation = citations[Math.floor(Math.random() * citations.length)];
-  citationEl.textContent = citation;
-  citationEl.style.opacity = '1';
-  setTimeout(()=> citationEl.style.opacity = '0', 1400);
+  scoreEl.textContent = "Score : " + score;
 
-  // slight speed up
-  vx *= 1.02;
-  vy *= 1.02;
+  // Changer couleur
+  const newColor = couleurAleatoire();
+  carre.style.background = newColor;
+  carre.style.boxShadow = `0 0 25px ${newColor}, 0 0 60px ${newColor}`;
+
+  // Citation
+  const txt = citations[Math.floor(Math.random()*citations.length)];
+  citationEl.textContent = txt;
+  citationEl.style.opacity = 1;
+  setTimeout(()=>citationEl.style.opacity=0,1500);
 });
 
-/* ---------- Start / reset game ---------- */
-startBtn.addEventListener('click', () => {
+/* ---------------- START ---------------- */
+startBtn.addEventListener("click", () => {
   score = 0;
-  scoreEl.textContent = 'Score : 0';
+  scoreEl.textContent = "Score : 0";
 
-  // center carre
-  x = Math.floor((game.clientWidth - carre.offsetWidth) / 2);
-  y = Math.floor((game.clientHeight - carre.offsetHeight) / 2);
-  carre.style.left = x + 'px';
-  carre.style.top = y + 'px';
+  setNiveau(niveauSelect.value);
 
-  // apply level
-  const niv = niveauSelect.value;
-  setNiveau(niv);
-
-  // override with manual controls if changed
-  vx = Number(vitesseInput.value);
-  vy = Number(vitesseInput.value);
+  vx = vy = Number(vitesseInput.value);
   timer = Number(tempsInput.value);
-  timerEl.textContent = `Temps : ${timer}s`;
+  timerEl.textContent = "Temps : " + timer;
 
-  // clear any existing timers
-  if (countdown) clearInterval(countdown);
-  if (gameTimer) clearInterval(gameTimer);
+  x = game.clientWidth/2;
+  y = game.clientHeight/2;
 
-  // start game timer
-  gameTimer = setInterval(()=>{
+  clearInterval(window.timerInterval);
+  window.timerInterval = setInterval(()=>{
     timer--;
-    timerEl.textContent = `Temps : ${timer}s`;
+    timerEl.textContent = "Temps : " + timer;
+
     if (timer <= 0) {
-      clearInterval(gameTimer);
-      alert(score >= clicksRequis ? "🔥 Bravo ! Niveau réussi !" : "⏳ Temps écoulé !");
+      clearInterval(window.timerInterval);
+
+      if (score >= clicksRequis) alert("🔥 Niveau réussi !");
+      else alert("⏳ Temps écoulé !");
     }
-  }, 1000);
+  },1000);
 });
 
-/* ---------- On resize: keep carre inside game ---------- */
-window.addEventListener('resize', () => {
-  const maxX = game.clientWidth - carre.offsetWidth;
-  const maxY = game.clientHeight - carre.offsetHeight;
-  if (x > maxX) { x = maxX; carre.style.left = x + 'px'; }
-  if (y > maxY) { y = maxY; carre.style.top = y + 'px'; }
-});
-
-/* ---------- initial setup ---------- */
-createStars(60);
-setNiveau('facile');
+/* ---------------- INIT ---------------- */
 deplacerCarre();
-
+setNiveau("facile");
 </script>
+
 </body>
 </html>
