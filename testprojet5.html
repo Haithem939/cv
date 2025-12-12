@@ -6,7 +6,6 @@
 <title>Attrape le Carré – Niveaux & Chrono</title>
 
 <style>
-/* ---------------------- GLOBAL ---------------------- */
 body {
   margin: 0;
   font-family: "Poppins", sans-serif;
@@ -15,7 +14,6 @@ body {
   color: white;
 }
 
-/* ---------------------- PANNEAU DE CONTROLE ---------------------- */
 #controls {
   width: 270px;
   padding: 20px;
@@ -51,7 +49,6 @@ select, input[type=number] {
   color: white;
 }
 
-/* ---------------------- BOUTON START ---------------------- */
 button {
   padding: 12px;
   font-size: 1.1rem;
@@ -71,7 +68,6 @@ button:hover {
   box-shadow: 0 0 22px rgba(255,80,80,0.9);
 }
 
-/* ---------------------- ZONE DE JEU ---------------------- */
 #game-container {
   flex: 1;
   display: flex;
@@ -118,25 +114,18 @@ button:hover {
   position: absolute;
   cursor: pointer;
   box-shadow: 0 0 25px rgba(255, 60, 60, 0.9), 0 0 45px rgba(255, 0, 0, 0.4);
-  animation: pulse 1.6s infinite alternate;
   transition: 0.15s;
+  z-index: 10;
 }
 
 /* Traînée lumineuse */
 .trail {
   position: absolute;
-  width: 70px;
-  height: 70px;
   border-radius: 12px;
   pointer-events: none;
-  filter: blur(8px);
+  filter: blur(12px);
   opacity: 0.6;
-}
-
-/* Pulse animation */
-@keyframes pulse {
-  from { transform: scale(1); }
-  to { transform: scale(1.15); }
+  z-index: 5;
 }
 
 /* ---------------------- SCORE + TIMER ---------------------- */
@@ -168,7 +157,6 @@ button:hover {
 
 <body>
 
-<!-- ---------------------- CONTROLES ---------------------- -->
 <div id="controls">
   <h3>🎮 Contrôles</h3>
 
@@ -193,7 +181,6 @@ button:hover {
   <p id="niveauInfo"></p>
 </div>
 
-<!-- ---------------------- JEU ---------------------- -->
 <div id="game-container">
   <div id="game">
     <div id="score">Score : 0</div>
@@ -208,7 +195,6 @@ button:hover {
 </audio>
 
 <script>
-/* ---------------------- VARIABLES ---------------------- */
 const game = document.getElementById("game");
 const carre = document.getElementById("carre");
 const scoreEl = document.getElementById("score");
@@ -222,14 +208,12 @@ const startBtn = document.getElementById("startBtn");
 const niveauInfo = document.getElementById("niveauInfo");
 
 const citations = [
-  "Continue, tu brilles ✨","Chaque clic te rend meilleur 💪","Tu progresses !",
-  "Tu es plus fort que tu ne le crois 🔥","Rien ne t’arrête.","Encore un clic ! 💥",
-  "Tu es dans le flow 😎","Ne lâche rien !","Le succès est proche","Tout est possible",
-  "Chaque seconde compte","Reste concentré","Tu peux le faire !","Toujours avancer",
-  "Plus vite !","Chaque clic compte","Rêve grand","Fais-le pour toi","Persévère",
-  "Crois en toi","Force et courage","Jamais abandonner","Tu es un champion",
-  "La victoire est proche","Plus haut !","Toujours plus fort","Tu brilles",
-  "Chaque mouvement compte","Ton effort paie","Continue comme ça"
+"Continue, tu brilles ✨","Chaque clic te rend meilleur 💪","Tu progresses !","Tu es plus fort que tu ne le crois 🔥",
+"Rien ne t’arrête.","Encore un clic ! 💥","Tu es dans le flow 😎","Ne lâche rien !","Le succès est proche",
+"Tout est possible","Chaque seconde compte","Reste concentré","Tu peux le faire !","Toujours avancer",
+"Plus vite !","Chaque clic compte","Rêve grand","Fais-le pour toi","Persévère","Crois en toi",
+"Force et courage","Jamais abandonner","Tu es un champion","La victoire est proche","Plus haut !",
+"Toujours plus fort","Tu brilles","Chaque mouvement compte","Ton effort paie","Continue comme ça"
 ];
 
 let vx = 3, vy = 3;
@@ -240,8 +224,8 @@ let clicksRequis = 0;
 let countdown;
 let gameStarted = false;
 
-/* ---------------------- GENERER LES ETOILES ---------------------- */
-function createStars(count) {
+// ------------------ Etoiles ------------------
+function createStars(count){
   for(let i=0;i<count;i++){
     const star = document.createElement("div");
     star.className = "star";
@@ -252,44 +236,47 @@ function createStars(count) {
     game.appendChild(star);
   }
 }
-createStars(100); // 100 étoiles
+createStars(100);
 
-/* ---------------------- NIVEAUX ---------------------- */
-function setNiveau(niv) {
-  if (niv === "facile") { vx = vy = 3; timer = 15; clicksRequis = 3; carre.style.width="70px"; carre.style.height="70px"; }
-  if (niv === "moyen") { vx = vy = 5; timer = 25; clicksRequis = 5; carre.style.width="70px"; carre.style.height="70px"; }
-  if (niv === "difficile") { vx = vy = 8; timer = 35; clicksRequis = 7; carre.style.width="70px"; carre.style.height="70px"; }
-  if (niv === "hardcore") { vx = vy = 15; timer = 20; clicksRequis = 10; carre.style.width="40px"; carre.style.height="40px"; }
+// ------------------ Niveaux ------------------
+function setNiveau(niv){
+  if(niv==="facile"){ vx=vy=3; timer=15; clicksRequis=3; carre.style.width="70px"; carre.style.height="70px"; }
+  if(niv==="moyen"){ vx=vy=5; timer=25; clicksRequis=5; carre.style.width="70px"; carre.style.height="70px"; }
+  if(niv==="difficile"){ vx=vy=8; timer=35; clicksRequis=7; carre.style.width="70px"; carre.style.height="70px"; }
+  if(niv==="hardcore"){ vx=vy=15; timer=20; clicksRequis=10; carre.style.width="40px"; carre.style.height="40px"; }
 
   vitesseInput.value = vx;
   tempsInput.value = timer;
   niveauInfo.textContent = `Objectif : ${clicksRequis} clics en ${timer}s`;
 }
 
-/* ---------------------- TRAINEE ---------------------- */
-function createTrail(color) {
+// ------------------ Traînée ------------------
+function createTrail(color){
   const trail = document.createElement("div");
   trail.className = "trail";
   trail.style.left = x + "px";
   trail.style.top = y + "px";
+  trail.style.width = carre.offsetWidth+"px";
+  trail.style.height = carre.offsetHeight+"px";
   trail.style.background = color;
   game.appendChild(trail);
-  setTimeout(() => game.removeChild(trail), 400);
+  setTimeout(()=> game.removeChild(trail), 300);
 }
 
-/* ---------------------- CARRE ANIMATION ---------------------- */
-function deplacerCarre() {
+// ------------------ Déplacement carré ------------------
+function deplacerCarre(){
+  if(!gameStarted){ requestAnimationFrame(deplacerCarre); return; }
+
   const maxX = game.clientWidth - carre.offsetWidth;
   const maxY = game.clientHeight - carre.offsetHeight;
 
   x += vx;
   y += vy;
 
-  // Empêche le dépassement
-  if (x < 0) { x = 0; vx *= -1; }
-  if (y < 0) { y = 0; vy *= -1; }
-  if (x > maxX) { x = maxX; vx *= -1; }
-  if (y > maxY) { y = maxY; vy *= -1; }
+  if(x<0){ x=0; vx*=-1; }
+  if(y<0){ y=0; vy*=-1; }
+  if(x>maxX){ x=maxX; vx*=-1; }
+  if(y>maxY){ y=maxY; vy*=-1; }
 
   carre.style.left = x + "px";
   carre.style.top = y + "px";
@@ -299,70 +286,64 @@ function deplacerCarre() {
   requestAnimationFrame(deplacerCarre);
 }
 
-/* ---------------------- CLICK CARRE ---------------------- */
-carre.addEventListener("click", () => {
-  clickSound.currentTime = 0;
+// ------------------ Click ------------------
+carre.addEventListener("click", ()=>{
+  clickSound.currentTime=0;
   clickSound.play();
 
   score++;
-  scoreEl.textContent = "Score : " + score;
+  scoreEl.textContent="Score : "+score;
 
-  const citation = citations[Math.floor(Math.random() * citations.length)];
-  citationEl.textContent = citation;
-  citationEl.style.opacity = 1;
-  setTimeout(() => { citationEl.style.opacity = 0; }, 1500);
+  const citation = citations[Math.floor(Math.random()*citations.length)];
+  citationEl.textContent=citation;
+  citationEl.style.opacity=1;
+  setTimeout(()=>{ citationEl.style.opacity=0; },1500);
 
-  // Changer couleur aléatoire du carré
-  const r = Math.floor(Math.random()*256);
-  const g = Math.floor(Math.random()*256);
-  const b = Math.floor(Math.random()*256);
-  const color = `rgb(${r},${g},${b})`;
-  carre.style.background = color;
+  // Couleur aléatoire du carré
+  const r=Math.floor(Math.random()*256);
+  const g=Math.floor(Math.random()*256);
+  const b=Math.floor(Math.random()*256);
+  const color=`rgb(${r},${g},${b})`;
+  carre.style.background=color;
 
-  vx *= 1.03;
-  vy *= 1.03;
+  vx*=1.03;
+  vy*=1.03;
 });
 
-/* ---------------------- START GAME ---------------------- */
-startBtn.addEventListener("click", () => {
-  score = 0;
-  scoreEl.textContent = "Score : 0";
+// ------------------ Start ------------------
+startBtn.addEventListener("click", ()=>{
+  score=0;
+  scoreEl.textContent="Score : 0";
 
-  x = game.clientWidth / 2 - carre.offsetWidth/2;
-  y = game.clientHeight / 2 - carre.offsetHeight/2;
-
-  carre.style.left = x + "px";
-  carre.style.top = y + "px";
+  x=game.clientWidth/2 - carre.offsetWidth/2;
+  y=game.clientHeight/2 - carre.offsetHeight/2;
+  carre.style.left=x+"px";
+  carre.style.top=y+"px";
 
   const niv = niveauSelect.value;
   setNiveau(niv);
 
-  vx = Number(vitesseInput.value);
-  vy = Number(vitesseInput.value);
-  timer = Number(tempsInput.value);
-  timerEl.textContent = `Temps : ${timer}s`;
+  vx=Number(vitesseInput.value);
+  vy=Number(vitesseInput.value);
+  timer=Number(tempsInput.value);
+  timerEl.textContent=`Temps : ${timer}s`;
 
-  gameStarted = true;
+  gameStarted=true;
 
   clearInterval(countdown);
-  countdown = setInterval(() => {
+  countdown=setInterval(()=>{
     timer--;
-    timerEl.textContent = `Temps : ${timer}s`;
-
-    if (timer <= 0) {
+    timerEl.textContent=`Temps : ${timer}s`;
+    if(timer<=0){
       clearInterval(countdown);
-      gameStarted = false;
-
-      if (score >= clicksRequis) {
-        alert("🔥 Bravo ! Niveau réussi !");
-      } else {
-        alert("⏳ Temps écoulé !");
-      }
+      gameStarted=false;
+      if(score>=clicksRequis){ alert("🔥 Bravo ! Niveau réussi !"); }
+      else{ alert("⏳ Temps écoulé !"); }
     }
-  }, 1000);
+  },1000);
 });
 
-/* ---------------------- INITIALISATION ---------------------- */
+// ------------------ Initialisation ------------------
 deplacerCarre();
 setNiveau("facile");
 </script>
