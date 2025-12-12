@@ -1,13 +1,13 @@
 Améliorations faites: 
 
- TRAÎNÉE lumineuse visible et forte
+1- TRAÎNÉE lumineuse visible et forte
 
-    -  Traînée lumineuse dérriere le carré plus visible
+- Traînée lumineuse dérriere le carré plus visible
 
- Mode HARDCORE
+2- Mode HARDCORE
 
-    - Carré plus petit + vitesse extreme
+ - Carré plus petit + vitesse extreme
 
-Compte à rebours 3…2…1
+3- Compte à rebours 3…2…1
 
-    - animation avant lancement.
+ - animation avant lancement.
