@@ -1,12 +1,13 @@
-CODES AJOUTÉS / MODIFS FAITES
+Améliorations faites: 
+
  TRAÎNÉE lumineuse visible et forte
 
-  -  ajout de #trail + gestion dans JS
+    -  Traînée lumineuse dérriere le carré plus visible
 
-✔ Mode HARDCORE
+ Mode HARDCORE
 
-    - carré plus petit + vitesse extrême
+    - Carré plus petit + vitesse extreme
 
 Compte à rebours 3…2…1
 
-    - animation avant lancement
+    - animation avant lancement.
