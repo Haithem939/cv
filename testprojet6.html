@@ -340,22 +340,20 @@ carre.onclick = ()=>{
   score++;
   scoreEl.textContent="Score : "+score;
 
-  // Changement couleur
   const c=`hsl(${Math.random()*360},100%,60%)`;
   carre.style.background=c;
   carre.style.boxShadow=`0 0 25px ${c}, 0 0 45px ${c}`;
 
-  // Passage automatique au niveau suivant si objectif atteint
+  // Passage automatique au niveau suivant
   if(score >= clicksRequis){
-    gameStarted = false;
+    gameStarted=false;
     clearInterval(timerInterval);
     alert("🔥 Niveau réussi ! Passage au niveau suivant.");
-    // Changement automatique du niveau
     const levels = ["facile","moyen","difficile","hardcore"];
     let currentIndex = levels.indexOf(niveauSelect.value);
     let nextIndex = currentIndex+1 < levels.length ? currentIndex+1 : 0;
     niveauSelect.value = levels[nextIndex];
-    startBtn.click(); // relance le niveau suivant
+    startBtn.click();
   }
 };
 
