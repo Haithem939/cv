@@ -176,6 +176,8 @@ button:hover {
   cursor: pointer;
   z-index: 10;
   transition: background 0.2s;
+  background: hsl(0,100%,60%);
+  box-shadow: 0 0 25px hsl(0,100%,60%), 0 0 45px hsl(0,100%,60%);
 }
 
 /* TRAIL */
@@ -204,10 +206,10 @@ button:hover {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%,-50%);
   font-size: 5rem;
   color: #61c6ff;
-  text-shadow: 0 0 20px #9b7bff;
+  text-shadow: 0 0 20px #61c6ff;
   z-index: 20;
   display: none;
 }
@@ -225,7 +227,6 @@ button:hover {
 
 <!-- APP -->
 <div id="app">
-
   <div id="controls">
     <h3>🎮 Commandes</h3>
 
@@ -258,20 +259,34 @@ button:hover {
       <div id="countdown">3</div>
     </div>
   </div>
-
 </div>
 
 <script>
-// PAGE ACCUEIL
 const home = document.getElementById("home");
 const app = document.getElementById("app");
-document.getElementById("enterBtn").onclick = () => {
-  home.style.display = "none";
+const enterBtn = document.getElementById("enterBtn");
+const game = document.getElementById("game");
+const carre = document.getElementById("carre");
+const scoreEl = document.getElementById("score");
+const timerEl = document.getElementById("timer");
+const countdownEl = document.getElementById("countdown");
+const startBtn = document.getElementById("startBtn");
+const niveauSelect = document.getElementById("niveau");
+const vitesseInput = document.getElementById("vitesseControl");
+const tempsInput = document.getElementById("tempsControl");
+const niveauInfo = document.getElementById("niveauInfo");
+
+let x=100, y=100, vx=3, vy=3, score=0, timer=0, clicksRequis=0;
+let gameStarted=false;
+let countdownInterval=null, timerInterval=null;
+
+// PAGE ACCUEIL
+enterBtn.onclick = ()=>{
+  home.style.display="none";
   app.classList.add("active");
 };
 
-// étoiles
-const game = document.getElementById("game");
+// Etoiles
 for(let i=0;i<120;i++){
   const s=document.createElement("div");
   s.className="star";
@@ -280,53 +295,34 @@ for(let i=0;i<120;i++){
   game.appendChild(s);
 }
 
-// VARIABLES JEU
-const carre=document.getElementById("carre");
-const scoreEl=document.getElementById("score");
-const timerEl=document.getElementById("timer");
-const countdownEl=document.getElementById("countdown");
-
-let x=100,y=100,vx=3,vy=3;
-let gameStarted=false;
-let score=0, timer=15;
-let countdownInterval, timerInterval;
-
-// NIVEAUX
-const niveauSelect=document.getElementById("niveau");
-const vitesseInput=document.getElementById("vitesseControl");
-const tempsInput=document.getElementById("tempsControl");
-const niveauInfo=document.getElementById("niveauInfo");
-
+// Niveaux
 function setNiveau(){
   const niv = niveauSelect.value;
-  if(niv==="facile"){ vx=vy=3; timer=15; carre.style.width="70px"; carre.style.height="70px"; }
-  if(niv==="moyen"){ vx=vy=5; timer=25; carre.style.width="70px"; carre.style.height="70px"; }
-  if(niv==="difficile"){ vx=vy=8; timer=35; carre.style.width="70px"; carre.style.height="70px"; }
-  if(niv==="hardcore"){ vx=vy=15; timer=20; carre.style.width="40px"; carre.style.height="40px"; }
+  if(niv==="facile"){ vx=vy=3; timer=parseInt(tempsInput.value); clicksRequis=3; carre.style.width="70px"; carre.style.height="70px"; }
+  if(niv==="moyen"){ vx=vy=5; timer=parseInt(tempsInput.value); clicksRequis=5; carre.style.width="70px"; carre.style.height="70px"; }
+  if(niv==="difficile"){ vx=vy=8; timer=parseInt(tempsInput.value); clicksRequis=7; carre.style.width="70px"; carre.style.height="70px"; }
+  if(niv==="hardcore"){ vx=vy=15; timer=parseInt(tempsInput.value); clicksRequis=10; carre.style.width="40px"; carre.style.height="40px"; }
 
   vitesseInput.value=vx;
-  tempsInput.value=timer;
-  score=0;
-  scoreEl.textContent="Score : 0";
-  timerEl.textContent="Temps : "+timer+"s";
-  niveauInfo.textContent="Objectif : cliquez sur le carré";
+  niveauInfo.textContent=`Objectif : ${clicksRequis} clics en ${timer}s`;
 }
 
-// DEPLACEMENT
+// Déplacement
 function move(){
   if(!gameStarted){ requestAnimationFrame(move); return; }
 
-  const maxX=game.clientWidth-carre.offsetWidth;
-  const maxY=game.clientHeight-carre.offsetHeight;
+  const maxX = game.clientWidth - carre.offsetWidth;
+  const maxY = game.clientHeight - carre.offsetHeight;
 
   x+=vx; y+=vy;
-  if(x<=0||x>=maxX) vx*=-1;
-  if(y<=0||y>=maxY) vy*=-1;
+  if(x<0||x>maxX) vx*=-1;
+  if(y<0||y>maxY) vy*=-1;
 
   carre.style.left=x+"px";
   carre.style.top=y+"px";
 
-  const trail=document.createElement("div");
+  // Trail
+  const trail = document.createElement("div");
   trail.className="trail";
   trail.style.left=x+"px";
   trail.style.top=y+"px";
@@ -339,32 +335,46 @@ function move(){
   requestAnimationFrame(move);
 }
 
-// CLICK CARRE
-carre.onclick=()=>{
+// Click carré
+carre.onclick = ()=>{
   score++;
   scoreEl.textContent="Score : "+score;
+
+  // Changement couleur
   const c=`hsl(${Math.random()*360},100%,60%)`;
   carre.style.background=c;
+  carre.style.boxShadow=`0 0 25px ${c}, 0 0 45px ${c}`;
 };
 
-// START BOUTON
-document.getElementById("startBtn").onclick=()=>{
+// Start jeu
+startBtn.onclick = ()=>{
+  score=0;
+  scoreEl.textContent="Score : 0";
   setNiveau();
+  x=Math.random()*(game.clientWidth-carre.offsetWidth);
+  y=Math.random()*(game.clientHeight-carre.offsetHeight);
+  carre.style.left=x+"px";
+  carre.style.top=y+"px";
+  carre.style.background="hsl(0,100%,60%)";
+  carre.style.boxShadow="0 0 25px hsl(0,100%,60%),0 0 45px hsl(0,100%,60%)";
+
+  gameStarted=false;
   countdownEl.style.display="block";
   let count=3;
   countdownEl.textContent=count;
-  gameStarted=false;
 
   clearInterval(countdownInterval);
   clearInterval(timerInterval);
 
   countdownInterval = setInterval(()=>{
     count--;
-    if(count>0){ countdownEl.textContent=count; }
-    else{
+    if(count>0){
+      countdownEl.textContent=count;
+    } else {
       clearInterval(countdownInterval);
       countdownEl.style.display="none";
       gameStarted=true;
+
       timer = parseInt(tempsInput.value);
       timerEl.textContent="Temps : "+timer+"s";
 
