@@ -204,14 +204,14 @@ button:hover {
 /* CITATION */
 #citation {
   position: absolute;
-  bottom: 20px;
+  bottom: 30px;
   width: 100%;
   text-align: center;
   font-size: 1.3rem;
+  opacity: 0;
   color: #ffb3b3;
   text-shadow: 0 0 15px #ff8080;
-  opacity: 0;
-  transition: opacity 0.5s;
+  transition: opacity 0.8s ease-in-out;
 }
 
 /* COMPTE A REBOURS */
@@ -275,11 +275,11 @@ button:hover {
   </div>
 </div>
 
-  <audio id="clickSound">
+<!-- AUDIO CLIQUE -->
+<audio id="clickSound">
   <source src="son.mp3" type="audio/mpeg">
 </audio>
 
-  
 <script>
 const home = document.getElementById("home");
 const app = document.getElementById("app");
@@ -295,22 +295,20 @@ const vitesseInput = document.getElementById("vitesseControl");
 const tempsInput = document.getElementById("tempsControl");
 const niveauInfo = document.getElementById("niveauInfo");
 const citationEl = document.getElementById("citation");
+const clickSound = document.getElementById("clickSound");
+
+const citations = [
+"Continue, tu brilles ✨","Chaque clic te rend meilleur 💪","Tu progresses !","Tu es plus fort que tu ne le crois 🔥",
+"Rien ne t’arrête.","Encore un clic ! 💥","Tu es dans le flow 😎","Ne lâche rien !","Le succès est proche",
+"Tout est possible","Chaque seconde compte","Reste concentré","Tu peux le faire !","Toujours avancer",
+"Plus vite !","Chaque clic compte","Rêve grand","Fais-le pour toi","Persévère","Crois en toi",
+"Force et courage","Jamais abandonner","Tu es un champion","La victoire est proche","Plus haut !",
+"Toujours plus fort","Tu brilles","Chaque mouvement compte","Ton effort paie","Continue comme ça"
+];
 
 let x=100, y=100, vx=3, vy=3, score=0, timer=0, clicksRequis=0;
 let gameStarted=false;
 let countdownInterval=null, timerInterval=null;
-
-const citations = [
-  "Continue, tu brilles ✨","Chaque clic te rend meilleur 💪","Tu progresses !",
-  "Tu es plus fort que tu ne le crois 🔥","Rien ne t’arrête.","Encore un clic ! 💥",
-  "Tu es dans le flow 😎","Ne lâche rien !","Le succès est proche",
-  "Tout est possible","Chaque seconde compte","Reste concentré",
-  "Tu peux le faire !","Toujours avancer","Plus vite !","Chaque clic compte",
-  "Rêve grand","Fais-le pour toi","Persévère","Crois en toi",
-  "Force et courage","Jamais abandonner","Tu es un champion",
-  "La victoire est proche","Plus haut !","Toujours plus fort",
-  "Tu brilles","Chaque mouvement compte","Ton effort paie","Continue comme ça"
-];
 
 // PAGE ACCUEIL
 enterBtn.onclick = ()=>{
@@ -369,20 +367,26 @@ function move(){
 
 // Click carré
 carre.onclick = ()=>{
+  // Son
+  clickSound.currentTime=0;
+  clickSound.play();
+
+  // Score
   score++;
   scoreEl.textContent="Score : "+score;
 
+  // Couleur
   const c=`hsl(${Math.random()*360},100%,60%)`;
   carre.style.background=c;
   carre.style.boxShadow=`0 0 25px ${c}, 0 0 45px ${c}`;
 
-  // Affiche citation aléatoire
+  // Citation
   const citation = citations[Math.floor(Math.random()*citations.length)];
   citationEl.textContent = citation;
   citationEl.style.opacity = 1;
   setTimeout(()=>{ citationEl.style.opacity = 0; },1500);
 
-  // Passage automatique au niveau suivant
+  // Passage automatique niveau suivant
   if(score >= clicksRequis){
     gameStarted=false;
     clearInterval(timerInterval);
