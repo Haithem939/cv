@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attrape le Carré – Galaxy</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background-color: #000;
+  color: white;
+}
+
+/* ---------------------- HOME ---------------------- */
+#home {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at top, #111, #000);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+#home h1 {
+  font-size: 3rem;
+  text-shadow: 0 0 25px #61c6ff;
+}
+
+#home button {
+  margin-top: 30px;
+  padding: 15px 40px;
+  font-size: 1.3rem;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(45deg, #61c6ff, #3aa0ff);
+  color: black;
+  box-shadow: 0 0 25px #61c6ff;
+}
+
+/* ---------------------- LAYOUT ---------------------- */
+#container {
+  display: flex;
+  height: 100vh;
+}
+
+#controls {
+  width: 270px;
+  padding: 20px;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+}
+
+select, input, button {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+}
+
+button {
+  background: linear-gradient(45deg, #ff4d4d, #ff2626);
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(255,60,60,0.6);
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+#game-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#game {
+  position: relative;
+  width: 90vw;
+  height: 80vh;
+  border-radius: 25px;
+  background: black;
+  overflow: hidden;
+  border: 2px solid rgba(255,255,255,0.15);
+}
+
+/* ---------------------- ETOILES ---------------------- */
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: twinkle 2s infinite alternate;
+}
+
+@keyframes twinkle {
+  from { opacity: 0.3; }
+  to { opacity: 1; }
+}
+
+/* ---------------------- CARRE ---------------------- */
+#carre {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  border-radius: 12px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+/* Traînée */
+.trail {
+  position: absolute;
+  filter: blur(12px);
+  opacity: 0.6;
+  border-radius: 12px;
+  z-index: 5;
+}
+
+/* UI */
+#score, #timer {
+  position: absolute;
+  top: 15px;
+  font-size: 1.4rem;
+}
+#score { left: 20px; }
+#timer { right: 20px; }
+
+#citation {
+  position: absolute;
+  bottom: 30px;
+  width: 100%;
+  text-align: center;
+  opacity: 0;
+  transition: 0.8s;
+}
+
+#countdown {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 5rem;
+  text-shadow: 0 0 30px #61c6ff;
+  z-index: 50;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HOME -->
+<div id="home">
+  <h1>🌌 Attrape le Carré</h1>
+  <button id="playBtn">Jouer</button>
+</div>
+
+<div id="container">
+  <div id="controls">
+    <label>Niveau
+      <select id="niveau">
+        <option value="facile">Facile</option>
+        <option value="moyen">Moyen</option>
+        <option value="difficile">Difficile</option>
+        <option value="hardcore">Hardcore</option>
+      </select>
+    </label>
+    <button id="startBtn">🚀 Démarrer</button>
+    <p id="niveauInfo"></p>
+  </div>
+
+  <div id="game-container">
+    <div id="game">
+      <div id="score">Score : 0</div>
+      <div id="timer">Temps : 0</div>
+      <div id="carre"></div>
+      <div id="citation"></div>
+      <div id="countdown">3</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* HOME */
+document.getElementById("playBtn").onclick = () => {
+  document.getElementById("home").style.display = "none";
+};
+
+/* ELEMENTS */
+const game = document.getElementById("game");
+const carre = document.getElementById("carre");
+const scoreEl = document.getElementById("score");
+const timerEl = document.getElementById("timer");
+const citationEl = document.getElementById("citation");
+const niveauSelect = document.getElementById("niveau");
+const startBtn = document.getElementById("startBtn");
+const countdownEl = document.getElementById("countdown");
+
+/* ETOILES */
+for(let i=0;i<120;i++){
+  const s=document.createElement("div");
+  s.className="star";
+  s.style.left=Math.random()*game.clientWidth+"px";
+  s.style.top=Math.random()*game.clientHeight+"px";
+  game.appendChild(s);
+}
+
+/* NIVEAUX */
+const levels=["facile","moyen","difficile","hardcore"];
+let levelIndex=0;
+
+let x=0,y=0,vx=3,vy=3,score=0,timer=0,goal=0,playing=false;
+
+/* SET LEVEL */
+function setLevel(){
+  const lvl=levels[levelIndex];
+  niveauSelect.value=lvl;
+
+  if(lvl==="facile"){vx=vy=3;timer=15;goal=3;carre.style.width="70px";}
+  if(lvl==="moyen"){vx=vy=5;timer=25;goal=5;}
+  if(lvl==="difficile"){vx=vy=8;timer=35;goal=7;}
+  if(lvl==="hardcore"){vx=vy=15;timer=20;goal=10;carre.style.width="40px";}
+
+  niveauInfo.textContent=`Objectif : ${goal} clics`;
+}
+
+/* TRAIL */
+function trail(color){
+  const t=document.createElement("div");
+  t.className="trail";
+  t.style.left=x+"px";
+  t.style.top=y+"px";
+  t.style.width=carre.offsetWidth+"px";
+  t.style.height=carre.offsetHeight+"px";
+  t.style.background=color;
+  game.appendChild(t);
+  setTimeout(()=>t.remove(),300);
+}
+
+/* MOVE */
+function move(){
+  if(!playing){requestAnimationFrame(move);return;}
+
+  const maxX=game.clientWidth-carre.offsetWidth;
+  const maxY=game.clientHeight-carre.offsetHeight;
+
+  x+=vx;y+=vy;
+  if(x<0||x>maxX)vx*=-1;
+  if(y<0||y>maxY)vy*=-1;
+
+  carre.style.left=x+"px";
+  carre.style.top=y+"px";
+
+  trail(carre.style.background);
+  requestAnimationFrame(move);
+}
+
+/* CLICK */
+carre.onclick=()=>{
+  score++;
+  scoreEl.textContent="Score : "+score;
+
+  const c=`hsl(${Math.random()*360},100%,60%)`;
+  carre.style.background=c;
+};
+
+/* START */
+startBtn.onclick=()=>{
+  let c=3;
+  countdownEl.style.display="flex";
+  countdownEl.textContent=c;
+  playing=false;
+
+  const int=setInterval(()=>{
+    c--;
+    if(c>0)countdownEl.textContent=c;
+    else{
+      clearInterval(int);
+      countdownEl.style.display="none";
+      startGame();
+    }
+  },1000);
+};
+
+function startGame(){
+  score=0;
+  scoreEl.textContent="Score : 0";
+  setLevel();
+
+  x=Math.random()*(game.clientWidth-carre.offsetWidth);
+  y=Math.random()*(game.clientHeight-carre.offsetHeight);
+  carre.style.background=`hsl(${Math.random()*360},100%,60%)`;
+
+  playing=true;
+
+  const t=setInterval(()=>{
+    timer--;
+    timerEl.textContent="Temps : "+timer;
+    if(timer<=0){
+      clearInterval(t);
+      playing=false;
+      if(score>=goal && levelIndex<levels.length-1){
+        levelIndex++;
+        alert("Niveau réussi ! Prochain niveau débloqué 🚀");
+      }
+    }
+  },1000);
+}
+
+setLevel();
+move();
+</script>
+
+</body>
+</html>
