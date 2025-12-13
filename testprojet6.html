@@ -3,78 +3,139 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Attrape le Carré – Galaxy</title>
+<title>Attrape le Carré – Galaxy Edition</title>
 
 <style>
+/* ---------------- RESET ---------------- */
+* {
+  box-sizing: border-box;
+}
+
+/* ---------------- GLOBAL ---------------- */
 body {
   margin: 0;
   font-family: "Poppins", sans-serif;
-  background-color: #000;
+  background: black;
   color: white;
+  overflow: hidden;
 }
 
-/* ---------------------- HOME ---------------------- */
+/* ---------------- PAGE ACCUEIL ---------------- */
 #home {
   position: fixed;
   inset: 0;
-  background: radial-gradient(circle at top, #111, #000);
+  background: radial-gradient(circle at top, #0b1230, #000);
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   z-index: 100;
+  text-align: center;
 }
 
 #home h1 {
-  font-size: 3rem;
-  text-shadow: 0 0 25px #61c6ff;
+  font-size: 4rem;
+  letter-spacing: 3px;
+  color: #61c6ff;
+  text-shadow: 0 0 30px #61c6ff;
+  animation: glow 2s infinite alternate;
 }
 
-#home button {
-  margin-top: 30px;
-  padding: 15px 40px;
+#home p {
   font-size: 1.3rem;
-  border-radius: 30px;
+  opacity: 0.85;
+  margin-bottom: 40px;
+}
+
+#enterBtn {
+  padding: 16px 40px;
+  font-size: 1.3rem;
+  border-radius: 50px;
   border: none;
   cursor: pointer;
-  background: linear-gradient(45deg, #61c6ff, #3aa0ff);
+  background: linear-gradient(45deg, #61c6ff, #9b7bff);
   color: black;
-  box-shadow: 0 0 25px #61c6ff;
+  font-weight: 700;
+  box-shadow: 0 0 40px rgba(100,200,255,0.6);
+  transition: 0.3s;
 }
 
-/* ---------------------- LAYOUT ---------------------- */
-#container {
+#enterBtn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 60px rgba(150,220,255,1);
+}
+
+@keyframes glow {
+  from { text-shadow: 0 0 20px #61c6ff; }
+  to { text-shadow: 0 0 45px #9b7bff; }
+}
+
+/* ---------------- LAYOUT JEU ---------------- */
+#app {
   display: flex;
   height: 100vh;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1s;
 }
 
+#app.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ---------------- CONTROLES ---------------- */
 #controls {
-  width: 270px;
-  padding: 20px;
+  width: 280px;
+  padding: 25px;
   background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(15px);
+  border-right: 1px solid rgba(255,255,255,0.1);
   display: flex;
   flex-direction: column;
-  gap: 17px;
+  gap: 18px;
 }
 
-select, input, button {
+#controls h3 {
+  text-align: center;
+  font-size: 1.6rem;
+  color: #9b7bff;
+  text-shadow: 0 0 15px #9b7bff;
+}
+
+label {
+  font-size: 0.95rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+select, input {
   padding: 10px;
   border-radius: 10px;
   border: none;
+  background: rgba(255,255,255,0.15);
+  color: white;
 }
 
 button {
-  background: linear-gradient(45deg, #ff4d4d, #ff2626);
-  color: white;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
   cursor: pointer;
-  box-shadow: 0 0 15px rgba(255,60,60,0.6);
+  background: linear-gradient(45deg, #ff4d4d, #ff1f8f);
+  font-weight: bold;
+  letter-spacing: 1px;
+  box-shadow: 0 0 20px rgba(255,80,150,0.6);
+  transition: 0.3s;
 }
 
 button:hover {
-  transform: scale(1.05);
+  transform: scale(1.07);
+  box-shadow: 0 0 35px rgba(255,120,180,1);
 }
 
+/* ---------------- ZONE JEU ---------------- */
 #game-container {
   flex: 1;
   display: flex;
@@ -84,15 +145,15 @@ button:hover {
 
 #game {
   position: relative;
-  width: 90vw;
-  height: 80vh;
-  border-radius: 25px;
+  width: 90%;
+  height: 80%;
   background: black;
-  overflow: hidden;
+  border-radius: 25px;
   border: 2px solid rgba(255,255,255,0.15);
+  overflow: hidden;
 }
 
-/* ---------------------- ETOILES ---------------------- */
+/* ---------------- ETOILES ---------------- */
 .star {
   position: absolute;
   width: 2px;
@@ -104,70 +165,59 @@ button:hover {
 }
 
 @keyframes twinkle {
-  from { opacity: 0.3; }
+  from { opacity: 0.2; }
   to { opacity: 1; }
 }
 
-/* ---------------------- CARRE ---------------------- */
+/* ---------------- CARRE ---------------- */
 #carre {
   position: absolute;
   width: 70px;
   height: 70px;
-  border-radius: 12px;
+  border-radius: 14px;
   cursor: pointer;
   z-index: 10;
+  transition: background 0.2s;
 }
 
-/* Traînée */
+/* TRAIL */
 .trail {
   position: absolute;
-  filter: blur(12px);
-  opacity: 0.6;
-  border-radius: 12px;
-  z-index: 5;
+  filter: blur(14px);
+  opacity: 0.5;
+  border-radius: 14px;
+  pointer-events: none;
 }
 
-/* UI */
+/* HUD */
 #score, #timer {
   position: absolute;
   top: 15px;
   font-size: 1.4rem;
+  color: #61c6ff;
+  text-shadow: 0 0 10px #61c6ff;
 }
+
 #score { left: 20px; }
 #timer { right: 20px; }
-
-#citation {
-  position: absolute;
-  bottom: 30px;
-  width: 100%;
-  text-align: center;
-  opacity: 0;
-  transition: 0.8s;
-}
-
-#countdown {
-  position: absolute;
-  inset: 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  font-size: 5rem;
-  text-shadow: 0 0 30px #61c6ff;
-  z-index: 50;
-}
 </style>
 </head>
 
 <body>
 
-<!-- HOME -->
+<!-- PAGE ACCUEIL -->
 <div id="home">
-  <h1>🌌 Attrape le Carré</h1>
-  <button id="playBtn">Jouer</button>
+  <h1>GALAXY CUBE</h1>
+  <p>Attrape le carré. Accélère. Survis.</p>
+  <button id="enterBtn">🚀 Entrer dans le jeu</button>
 </div>
 
-<div id="container">
+<!-- APP -->
+<div id="app">
+
   <div id="controls">
+    <h3>🎮 Commandes</h3>
+
     <label>Niveau
       <select id="niveau">
         <option value="facile">Facile</option>
@@ -176,7 +226,16 @@ button:hover {
         <option value="hardcore">Hardcore</option>
       </select>
     </label>
-    <button id="startBtn">🚀 Démarrer</button>
+
+    <label>Vitesse
+      <input type="number" id="vitesseControl" value="3">
+    </label>
+
+    <label>Temps
+      <input type="number" id="tempsControl" value="15">
+    </label>
+
+    <button id="startBtn">▶ Démarrer</button>
     <p id="niveauInfo"></p>
   </div>
 
@@ -185,140 +244,70 @@ button:hover {
       <div id="score">Score : 0</div>
       <div id="timer">Temps : 0</div>
       <div id="carre"></div>
-      <div id="citation"></div>
-      <div id="countdown">3</div>
     </div>
   </div>
+
 </div>
 
 <script>
-/* HOME */
-document.getElementById("playBtn").onclick = () => {
-  document.getElementById("home").style.display = "none";
+const home = document.getElementById("home");
+const app = document.getElementById("app");
+document.getElementById("enterBtn").onclick = () => {
+  home.style.display = "none";
+  app.classList.add("active");
 };
 
-/* ELEMENTS */
+// étoiles
 const game = document.getElementById("game");
-const carre = document.getElementById("carre");
-const scoreEl = document.getElementById("score");
-const timerEl = document.getElementById("timer");
-const citationEl = document.getElementById("citation");
-const niveauSelect = document.getElementById("niveau");
-const startBtn = document.getElementById("startBtn");
-const countdownEl = document.getElementById("countdown");
-
-/* ETOILES */
 for(let i=0;i<120;i++){
   const s=document.createElement("div");
   s.className="star";
-  s.style.left=Math.random()*game.clientWidth+"px";
-  s.style.top=Math.random()*game.clientHeight+"px";
+  s.style.left=Math.random()*100+"%";
+  s.style.top=Math.random()*100+"%";
   game.appendChild(s);
 }
 
-/* NIVEAUX */
-const levels=["facile","moyen","difficile","hardcore"];
-let levelIndex=0;
+// logique carré
+const carre=document.getElementById("carre");
+let x=100,y=100,vx=3,vy=3,gameStarted=false;
 
-let x=0,y=0,vx=3,vy=3,score=0,timer=0,goal=0,playing=false;
-
-/* SET LEVEL */
-function setLevel(){
-  const lvl=levels[levelIndex];
-  niveauSelect.value=lvl;
-
-  if(lvl==="facile"){vx=vy=3;timer=15;goal=3;carre.style.width="70px";}
-  if(lvl==="moyen"){vx=vy=5;timer=25;goal=5;}
-  if(lvl==="difficile"){vx=vy=8;timer=35;goal=7;}
-  if(lvl==="hardcore"){vx=vy=15;timer=20;goal=10;carre.style.width="40px";}
-
-  niveauInfo.textContent=`Objectif : ${goal} clics`;
-}
-
-/* TRAIL */
-function trail(color){
-  const t=document.createElement("div");
-  t.className="trail";
-  t.style.left=x+"px";
-  t.style.top=y+"px";
-  t.style.width=carre.offsetWidth+"px";
-  t.style.height=carre.offsetHeight+"px";
-  t.style.background=color;
-  game.appendChild(t);
-  setTimeout(()=>t.remove(),300);
-}
-
-/* MOVE */
 function move(){
-  if(!playing){requestAnimationFrame(move);return;}
+  if(!gameStarted){ requestAnimationFrame(move); return; }
 
   const maxX=game.clientWidth-carre.offsetWidth;
   const maxY=game.clientHeight-carre.offsetHeight;
 
-  x+=vx;y+=vy;
-  if(x<0||x>maxX)vx*=-1;
-  if(y<0||y>maxY)vy*=-1;
+  x+=vx; y+=vy;
+  if(x<=0||x>=maxX)vx*=-1;
+  if(y<=0||y>=maxY)vy*=-1;
 
   carre.style.left=x+"px";
   carre.style.top=y+"px";
 
-  trail(carre.style.background);
+  const trail=document.createElement("div");
+  trail.className="trail";
+  trail.style.left=x+"px";
+  trail.style.top=y+"px";
+  trail.style.width=carre.offsetWidth+"px";
+  trail.style.height=carre.offsetHeight+"px";
+  trail.style.background=carre.style.background;
+  game.appendChild(trail);
+  setTimeout(()=>trail.remove(),250);
+
   requestAnimationFrame(move);
 }
 
-/* CLICK */
 carre.onclick=()=>{
-  score++;
-  scoreEl.textContent="Score : "+score;
-
   const c=`hsl(${Math.random()*360},100%,60%)`;
   carre.style.background=c;
 };
 
-/* START */
-startBtn.onclick=()=>{
-  let c=3;
-  countdownEl.style.display="flex";
-  countdownEl.textContent=c;
-  playing=false;
-
-  const int=setInterval(()=>{
-    c--;
-    if(c>0)countdownEl.textContent=c;
-    else{
-      clearInterval(int);
-      countdownEl.style.display="none";
-      startGame();
-    }
-  },1000);
+document.getElementById("startBtn").onclick=()=>{
+  x=100;y=100;
+  carre.style.background="hsl(0,100%,60%)";
+  gameStarted=true;
 };
 
-function startGame(){
-  score=0;
-  scoreEl.textContent="Score : 0";
-  setLevel();
-
-  x=Math.random()*(game.clientWidth-carre.offsetWidth);
-  y=Math.random()*(game.clientHeight-carre.offsetHeight);
-  carre.style.background=`hsl(${Math.random()*360},100%,60%)`;
-
-  playing=true;
-
-  const t=setInterval(()=>{
-    timer--;
-    timerEl.textContent="Temps : "+timer;
-    if(timer<=0){
-      clearInterval(t);
-      playing=false;
-      if(score>=goal && levelIndex<levels.length-1){
-        levelIndex++;
-        alert("Niveau réussi ! Prochain niveau débloqué 🚀");
-      }
-    }
-  },1000);
-}
-
-setLevel();
 move();
 </script>
 
