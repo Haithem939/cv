@@ -7,9 +7,7 @@
 
 <style>
 /* ---------------- RESET ---------------- */
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 /* ---------------- GLOBAL ---------------- */
 body {
@@ -201,15 +199,15 @@ button:hover {
 #score { left: 20px; }
 #timer { right: 20px; }
 
-/* CITATIONS */
+/* CITATION */
 #citation {
   position: absolute;
-  bottom: 30px;
+  bottom: 20px;
   width: 100%;
   text-align: center;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   color: #ffb3b3;
-  text-shadow: 0 0 10px #ff8080;
+  text-shadow: 0 0 15px #ff8080;
   opacity: 0;
   transition: opacity 0.5s;
 }
@@ -266,18 +264,22 @@ button:hover {
 <script>
 const home = document.getElementById("home");
 const app = document.getElementById("app");
-const game = document.getElementById("game");
-const carre = document.getElementById("carre");
-const scoreEl = document.getElementById("score");
-const timerEl = document.getElementById("timer");
-const citationEl = document.getElementById("citation");
-const startBtn = document.getElementById("startBtn");
-const niveauSelect = document.getElementById("niveau");
-const vitesseInput = document.getElementById("vitesseControl");
-const tempsInput = document.getElementById("tempsControl");
-const niveauInfo = document.getElementById("niveauInfo");
+document.getElementById("enterBtn").onclick = () => {
+  home.style.display = "none";
+  app.classList.add("active");
+};
 
-// Citations motivantes
+// étoiles
+const game = document.getElementById("game");
+for(let i=0;i<120;i++){
+  const s=document.createElement("div");
+  s.className="star";
+  s.style.left=Math.random()*100+"%";
+  s.style.top=Math.random()*100+"%";
+  game.appendChild(s);
+}
+
+// citations
 const citations = [
   "Continue, tu brilles ✨","Chaque clic te rend meilleur 💪","Tu progresses !","Tu es plus fort que tu ne le crois 🔥",
   "Rien ne t’arrête.","Encore un clic ! 💥","Tu es dans le flow 😎","Ne lâche rien !","Le succès est proche",
@@ -287,56 +289,34 @@ const citations = [
   "Toujours plus fort","Tu brilles","Chaque mouvement compte","Ton effort paie","Continue comme ça"
 ];
 
-home.querySelector("#enterBtn").onclick = () => {
-  home.style.display = "none";
-  app.classList.add("active");
-};
+// logique carré
+const carre=document.getElementById("carre");
+const scoreEl=document.getElementById("score");
+const timerEl=document.getElementById("timer");
+const citationEl=document.getElementById("citation");
 
-// étoiles
-for(let i=0;i<120;i++){
-  const s=document.createElement("div");
-  s.className="star";
-  s.style.left=Math.random()*100+"%";
-  s.style.top=Math.random()*100+"%";
-  game.appendChild(s);
-}
-
-// variables
-let x=100,y=100,vx=3,vy=3,score=0,timer=15,gameStarted=false;
-
-// fonctions
-function setNiveau(niv){
-  if(niv==="facile"){ vx=vy=3; timer=15; }
-  if(niv==="moyen"){ vx=vy=5; timer=20; }
-  if(niv==="difficile"){ vx=vy=8; timer=25; }
-  if(niv==="hardcore"){ vx=vy=12; timer=20; }
-  vitesseInput.value=vx;
-  tempsInput.value=timer;
-  score=0;
-  scoreEl.textContent="Score : 0";
-  timerEl.textContent="Temps : "+timer;
-}
+let x=100,y=100,vx=3,vy=3,gameStarted=false,score=0,timer=15;
 
 function move(){
   if(!gameStarted){ requestAnimationFrame(move); return; }
 
-  const maxX = game.clientWidth - carre.offsetWidth;
-  const maxY = game.clientHeight - carre.offsetHeight;
+  const maxX=game.clientWidth-carre.offsetWidth;
+  const maxY=game.clientHeight-carre.offsetHeight;
 
-  x += vx; y += vy;
-  if(x<=0||x>=maxX) vx*=-1;
-  if(y<=0||y>=maxY) vy*=-1;
+  x+=vx; y+=vy;
+  if(x<=0||x>=maxX)vx*=-1;
+  if(y<=0||y>=maxY)vy*=-1;
 
-  carre.style.left = x+"px";
-  carre.style.top = y+"px";
+  carre.style.left=x+"px";
+  carre.style.top=y+"px";
 
-  const trail = document.createElement("div");
-  trail.className = "trail";
-  trail.style.left = x+"px";
-  trail.style.top = y+"px";
-  trail.style.width = carre.offsetWidth+"px";
-  trail.style.height = carre.offsetHeight+"px";
-  trail.style.background = carre.style.background;
+  const trail=document.createElement("div");
+  trail.className="trail";
+  trail.style.left=x+"px";
+  trail.style.top=y+"px";
+  trail.style.width=carre.offsetWidth+"px";
+  trail.style.height=carre.offsetHeight+"px";
+  trail.style.background=carre.style.background;
   game.appendChild(trail);
   setTimeout(()=>trail.remove(),250);
 
@@ -344,40 +324,41 @@ function move(){
 }
 
 // clic carré
-carre.onclick = () => {
-  const color = `hsl(${Math.random()*360},100%,60%)`;
-  carre.style.background = color;
+carre.onclick=()=>{
   score++;
-  scoreEl.textContent = "Score : "+score;
+  scoreEl.textContent="Score : "+score;
 
-  // citation
-  const cit = citations[Math.floor(Math.random()*citations.length)];
-  citationEl.textContent = cit;
+  // couleur aléatoire
+  const c=`hsl(${Math.random()*360},100%,60%)`;
+  carre.style.background=c;
+
+  // citation aléatoire
+  const citation = citations[Math.floor(Math.random()*citations.length)];
+  citationEl.textContent = citation;
   citationEl.style.opacity = 1;
-  setTimeout(()=>citationEl.style.opacity = 0, 1500);
+  setTimeout(()=>{ citationEl.style.opacity = 0; },1500);
 };
 
-// start jeu
-startBtn.onclick = () => {
-  x = Math.random()*(game.clientWidth-carre.offsetWidth);
-  y = Math.random()*(game.clientHeight-carre.offsetHeight);
-  carre.style.left = x+"px";
-  carre.style.top = y+"px";
-  setNiveau(niveauSelect.value);
+// start bouton
+document.getElementById("startBtn").onclick=()=>{
+  x=100; y=100;
   carre.style.background="hsl(0,100%,60%)";
-  gameStarted = true;
+  score=0;
+  scoreEl.textContent="Score : 0";
+  timer = parseInt(document.getElementById("tempsControl").value);
+  timerEl.textContent="Temps : "+timer+"s";
+  gameStarted=true;
 
-  // chrono
-  let t = timer;
-  timerEl.textContent="Temps : "+t;
-  clearInterval(window.countdown);
-  window.countdown = setInterval(()=>{
-    t--;
-    timerEl.textContent="Temps : "+t;
-    if(t<=0){
-      clearInterval(window.countdown);
-      gameStarted = false;
-      alert("⏳ Temps écoulé ! Score : "+score);
+  clearInterval(window.gameTimer);
+  window.gameTimer = setInterval(()=>{
+    if(gameStarted){
+      timer--;
+      timerEl.textContent="Temps : "+timer+"s";
+      if(timer<=0){
+        gameStarted=false;
+        clearInterval(window.gameTimer);
+        alert("⏳ Temps écoulé !");
+      }
     }
   },1000);
 };
