@@ -176,6 +176,8 @@ button:hover {
   cursor: pointer;
   z-index: 10;
   transition: background 0.2s;
+  background: hsl(0,100%,60%);
+  box-shadow: 0 0 25px hsl(0,100%,60%), 0 0 45px hsl(0,100%,60%);
 }
 
 /* TRAIL */
@@ -211,6 +213,19 @@ button:hover {
   opacity: 0;
   transition: opacity 0.5s;
 }
+
+/* COMPTE A REBOURS */
+#countdown {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  font-size: 5rem;
+  color: #61c6ff;
+  text-shadow: 0 0 20px #61c6ff;
+  z-index: 20;
+  display: none;
+}
 </style>
 </head>
 
@@ -225,7 +240,6 @@ button:hover {
 
 <!-- APP -->
 <div id="app">
-
   <div id="controls">
     <h3>🎮 Commandes</h3>
 
@@ -256,21 +270,50 @@ button:hover {
       <div id="timer">Temps : 0</div>
       <div id="carre"></div>
       <div id="citation"></div>
+      <div id="countdown">3</div>
     </div>
   </div>
-
 </div>
 
 <script>
 const home = document.getElementById("home");
 const app = document.getElementById("app");
-document.getElementById("enterBtn").onclick = () => {
-  home.style.display = "none";
+const enterBtn = document.getElementById("enterBtn");
+const game = document.getElementById("game");
+const carre = document.getElementById("carre");
+const scoreEl = document.getElementById("score");
+const timerEl = document.getElementById("timer");
+const countdownEl = document.getElementById("countdown");
+const startBtn = document.getElementById("startBtn");
+const niveauSelect = document.getElementById("niveau");
+const vitesseInput = document.getElementById("vitesseControl");
+const tempsInput = document.getElementById("tempsControl");
+const niveauInfo = document.getElementById("niveauInfo");
+const citationEl = document.getElementById("citation");
+
+let x=100, y=100, vx=3, vy=3, score=0, timer=0, clicksRequis=0;
+let gameStarted=false;
+let countdownInterval=null, timerInterval=null;
+
+const citations = [
+  "Continue, tu brilles ✨","Chaque clic te rend meilleur 💪","Tu progresses !",
+  "Tu es plus fort que tu ne le crois 🔥","Rien ne t’arrête.","Encore un clic ! 💥",
+  "Tu es dans le flow 😎","Ne lâche rien !","Le succès est proche",
+  "Tout est possible","Chaque seconde compte","Reste concentré",
+  "Tu peux le faire !","Toujours avancer","Plus vite !","Chaque clic compte",
+  "Rêve grand","Fais-le pour toi","Persévère","Crois en toi",
+  "Force et courage","Jamais abandonner","Tu es un champion",
+  "La victoire est proche","Plus haut !","Toujours plus fort",
+  "Tu brilles","Chaque mouvement compte","Ton effort paie","Continue comme ça"
+];
+
+// PAGE ACCUEIL
+enterBtn.onclick = ()=>{
+  home.style.display="none";
   app.classList.add("active");
 };
 
-// étoiles
-const game = document.getElementById("game");
+// Etoiles
 for(let i=0;i<120;i++){
   const s=document.createElement("div");
   s.className="star";
@@ -279,38 +322,34 @@ for(let i=0;i<120;i++){
   game.appendChild(s);
 }
 
-// citations
-const citations = [
-  "Continue, tu brilles ✨","Chaque clic te rend meilleur 💪","Tu progresses !","Tu es plus fort que tu ne le crois 🔥",
-  "Rien ne t’arrête.","Encore un clic ! 💥","Tu es dans le flow 😎","Ne lâche rien !","Le succès est proche",
-  "Tout est possible","Chaque seconde compte","Reste concentré","Tu peux le faire !","Toujours avancer",
-  "Plus vite !","Chaque clic compte","Rêve grand","Fais-le pour toi","Persévère","Crois en toi",
-  "Force et courage","Jamais abandonner","Tu es un champion","La victoire est proche","Plus haut !",
-  "Toujours plus fort","Tu brilles","Chaque mouvement compte","Ton effort paie","Continue comme ça"
-];
+// Niveaux
+function setNiveau(){
+  const niv = niveauSelect.value;
+  if(niv==="facile"){ vx=vy=3; timer=parseInt(tempsInput.value); clicksRequis=3; carre.style.width="70px"; carre.style.height="70px"; }
+  if(niv==="moyen"){ vx=vy=5; timer=parseInt(tempsInput.value); clicksRequis=5; carre.style.width="70px"; carre.style.height="70px"; }
+  if(niv==="difficile"){ vx=vy=8; timer=parseInt(tempsInput.value); clicksRequis=7; carre.style.width="70px"; carre.style.height="70px"; }
+  if(niv==="hardcore"){ vx=vy=15; timer=parseInt(tempsInput.value); clicksRequis=10; carre.style.width="40px"; carre.style.height="40px"; }
 
-// logique carré
-const carre=document.getElementById("carre");
-const scoreEl=document.getElementById("score");
-const timerEl=document.getElementById("timer");
-const citationEl=document.getElementById("citation");
+  vitesseInput.value=vx;
+  niveauInfo.textContent=`Objectif : ${clicksRequis} clics en ${timer}s`;
+}
 
-let x=100,y=100,vx=3,vy=3,gameStarted=false,score=0,timer=15;
-
+// Déplacement
 function move(){
   if(!gameStarted){ requestAnimationFrame(move); return; }
 
-  const maxX=game.clientWidth-carre.offsetWidth;
-  const maxY=game.clientHeight-carre.offsetHeight;
+  const maxX = game.clientWidth - carre.offsetWidth;
+  const maxY = game.clientHeight - carre.offsetHeight;
 
   x+=vx; y+=vy;
-  if(x<=0||x>=maxX)vx*=-1;
-  if(y<=0||y>=maxY)vy*=-1;
+  if(x<0||x>maxX) vx*=-1;
+  if(y<0||y>maxY) vy*=-1;
 
   carre.style.left=x+"px";
   carre.style.top=y+"px";
 
-  const trail=document.createElement("div");
+  // Trail
+  const trail = document.createElement("div");
   trail.className="trail";
   trail.style.left=x+"px";
   trail.style.top=y+"px";
@@ -323,42 +362,75 @@ function move(){
   requestAnimationFrame(move);
 }
 
-// clic carré
-carre.onclick=()=>{
+// Click carré
+carre.onclick = ()=>{
   score++;
   scoreEl.textContent="Score : "+score;
 
-  // couleur aléatoire
   const c=`hsl(${Math.random()*360},100%,60%)`;
   carre.style.background=c;
+  carre.style.boxShadow=`0 0 25px ${c}, 0 0 45px ${c}`;
 
-  // citation aléatoire
+  // Affiche citation aléatoire
   const citation = citations[Math.floor(Math.random()*citations.length)];
   citationEl.textContent = citation;
   citationEl.style.opacity = 1;
   setTimeout(()=>{ citationEl.style.opacity = 0; },1500);
+
+  // Passage automatique au niveau suivant
+  if(score >= clicksRequis){
+    gameStarted=false;
+    clearInterval(timerInterval);
+    alert("🔥 Niveau réussi ! Passage au niveau suivant.");
+    const levels = ["facile","moyen","difficile","hardcore"];
+    let currentIndex = levels.indexOf(niveauSelect.value);
+    let nextIndex = currentIndex+1 < levels.length ? currentIndex+1 : 0;
+    niveauSelect.value = levels[nextIndex];
+    startBtn.click();
+  }
 };
 
-// start bouton
-document.getElementById("startBtn").onclick=()=>{
-  x=100; y=100;
-  carre.style.background="hsl(0,100%,60%)";
+// Start jeu
+startBtn.onclick = ()=>{
   score=0;
   scoreEl.textContent="Score : 0";
-  timer = parseInt(document.getElementById("tempsControl").value);
-  timerEl.textContent="Temps : "+timer+"s";
-  gameStarted=true;
+  setNiveau();
+  x=Math.random()*(game.clientWidth-carre.offsetWidth);
+  y=Math.random()*(game.clientHeight-carre.offsetHeight);
+  carre.style.left=x+"px";
+  carre.style.top=y+"px";
+  carre.style.background="hsl(0,100%,60%)";
+  carre.style.boxShadow="0 0 25px hsl(0,100%,60%),0 0 45px hsl(0,100%,60%)";
 
-  clearInterval(window.gameTimer);
-  window.gameTimer = setInterval(()=>{
-    if(gameStarted){
-      timer--;
+  gameStarted=false;
+  countdownEl.style.display="block";
+  let count=3;
+  countdownEl.textContent=count;
+
+  clearInterval(countdownInterval);
+  clearInterval(timerInterval);
+
+  countdownInterval = setInterval(()=>{
+    count--;
+    if(count>0){
+      countdownEl.textContent=count;
+    } else {
+      clearInterval(countdownInterval);
+      countdownEl.style.display="none";
+      gameStarted=true;
+
+      timer = parseInt(tempsInput.value);
       timerEl.textContent="Temps : "+timer+"s";
-      if(timer<=0){
-        gameStarted=false;
-        clearInterval(window.gameTimer);
-        alert("⏳ Temps écoulé !");
-      }
+
+      timerInterval = setInterval(()=>{
+        timer--;
+        timerEl.textContent="Temps : "+timer+"s";
+        if(timer<=0){
+          clearInterval(timerInterval);
+          gameStarted=false;
+          alert("⏳ Temps écoulé ! Score : "+score);
+        }
+      },1000);
     }
   },1000);
 };
