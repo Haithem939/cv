@@ -1,3 +1,7 @@
+Amélioration faites:
+
+- à chaque essai du jeu veuillez cliquer sur démarrer.
+
 1- 25 citations ajoutées.
 
 2-Des étoiles générées dans la zone de jeu comme si on était dan l'espace.
