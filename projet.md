@@ -42,3 +42,31 @@ flowchart TB
 
     L_B_C_0@{ animation: slow }
 ```
+
+```mermaid
+---
+config:
+  theme: redux
+
+flowchart TD
+    A[Démarrage du site] --> B[Page d'accueil]
+    B --> C[Cliquer sur "Entrer dans le jeu"]
+    C --> D[Sélection du niveau]
+    D --> E[Cliquer sur Démarrer]
+    E --> F[Compte à rebours 3..2..1]
+    F --> G[Début du jeu]
+
+    G --> H[Carré se déplace]
+    H --> I[Utilisateur clique sur le carré]
+    I --> J[Score +1]
+
+    J --> K{Objectif atteint ?}
+    K -->|Oui| L[Niveau suivant]
+    L --> E
+
+    K -->|Non| M{Temps écoulé ?}
+    M -->|Non| H
+    M -->|Oui| N[Fin de partie]
+
+```
+
