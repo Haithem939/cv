@@ -1,13 +1,16 @@
-Projet : Texte “en orbite”
-Idée du projet:
-- crée une animation où un texte tourne lentement autour d’un centre, comme une planète autour du soleil.
-Par exemple, le mot “Créatif” ou “Bienvenue” tourne autour d’un logo ou d'une image.
+Résumé du projet – Galaxy Cube
 
- L’objectif: 
- - c'est de donner un effet dynamique et spatial à une page web.
- - Apprendre à utiliser les transformations CSS (rotate, translate)
- - Comprendre les animations continues (boucles infinies)
- - Créer un effet esthétique sans bibliothèque externe.
+Le projet Galaxy Cube est un mini-jeu interactif développé en HTML, CSS et JavaScript, dont l’objectif principal est de créer une expérience ludique, dynamique et visuellement immersive directement dans un navigateur web, sans utiliser de moteur de jeu externe.
+
+Le but du jeu est simple : attraper un carré en mouvement dans un temps limité. À chaque clic réussi, le joueur marque des points, le carré change de couleur, un effet visuel et sonore est déclenché, et une citation motivante apparaît à l’écran. Le jeu est structuré en plusieurs niveaux de difficulté (facile, moyen, difficile, hardcore), avec une augmentation progressive de la vitesse, des contraintes de temps et du nombre de clics requis.
+
+Le projet vise plusieurs objectifs :
+
+- Mettre en pratique les bases du développement web interactif
+- Comprendre la gestion des événements utilisateur (clics, temps, animations)
+- Travailler la logique de jeu (score, chrono, niveaux, conditions de victoire)
+- Créer une interface moderne et esthétique avec animations, effets lumineux et ambiance “galaxie”
+- Améliorer l’expérience utilisateur grâce aux sons, aux citations et au feedback visuel
 
  Technologies utilisées:
   - HTML → structure du texte et du cercle
