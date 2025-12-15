@@ -21,7 +21,7 @@ Le projet vise plusieurs objectifs :
  
 - Le joueur peut accéder à une page d’accueil puis lancer le jeu
 - Le carré est visible, cliquable et en mouvement
-- Le score s’incrémente correctement à chaque clic
+- Le score augmente à chaque clic
 - Un compte à rebours s’affiche avant le début de chaque partie
 - Le chronomètre se déclenche et se met à jour en temps réel
 - Des citations motivantes apparaissent lors des clics
