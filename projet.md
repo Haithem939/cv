@@ -44,7 +44,7 @@ flowchart TB
 ```
 
 ```mermaid
----
+
 config:
   theme: redux
 
