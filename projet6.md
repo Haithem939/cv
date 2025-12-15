@@ -1,4 +1,6 @@
-Les améliorations faites pour projets6.md : 
+Les améliorations faites pour projets6.html:
+
+- à chaque essai du jeu veuillez cliquer sur démarrer.
 
 1- Page d’accueil:
     - Création d’une page d’accueil avec un titre “GALAXY CUBE” et un bouton pour entrer dans le jeu.
