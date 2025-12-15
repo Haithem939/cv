@@ -16,6 +16,8 @@ Le projet vise plusieurs objectifs :
   - HTML → structure du texte et du cercle
   - CSS → animation (rotation, positionnement circulaire)
   - JavaScript → pour contrôler la vitesse ou le sens de rotation (optionnel)
+  - ChatGPT pour écrire le premier code avant amélioration.
+  - Notube pour transformer le son téléchargé sur youtube en MP3.
 
  Résultat attendu:
  
