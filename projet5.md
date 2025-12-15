@@ -4,7 +4,7 @@ Amélioration faites:
 
 1- 25 citations ajoutées.
 
-2-Des étoiles générées dans la zone de jeu comme si on était dan l'espace.
+2-Des étoiles générées dans la zone de jeu comme si on était dans l'espace.
 
 3- le carré change de couleur à chaque clic (palette sympa) ;
 
