@@ -18,9 +18,18 @@ Le projet vise plusieurs objectifs :
   - JavaScript → pour contrôler la vitesse ou le sens de rotation (optionnel)
 
  Résultat attendu:
- un élément central (un logo, un cercle vide, etc.), Autour, je places un texte positionné à une certaine distance du centre et je fais tourner 
-ce texte autour du centre en utilisant une animation rotate().
+ 
+- Le joueur peut accéder à une page d’accueil puis lancer le jeu
+- Le carré est visible, cliquable et en mouvement
+- Le score s’incrémente correctement à chaque clic
+- Un compte à rebours s’affiche avant le début de chaque partie
+- Le chronomètre se déclenche et se met à jour en temps réel
+- Des citations motivantes apparaissent lors des clics
+- Un son est joué à chaque interaction
+- Le joueur passe automatiquement au niveau suivant lorsqu’il réussit l’objectif
+- Le jeu reste fluide, lisible et agréable à utiliser
 
+  
 ```mermaid
 ---
 config:
