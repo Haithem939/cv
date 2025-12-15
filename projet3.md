@@ -1,5 +1,9 @@
 la différences entre testprojet2.html et testprojet3.html:
 
+
+- à chaque essai du jeu veuillez cliquer sur démarrer.
+
+  
  Design et style: 
 
 1- Panneau de contrôle:
