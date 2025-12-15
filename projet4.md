@@ -1,5 +1,8 @@
 Améliorations faites: 
 
+- à chaque essai du jeu veuillez cliquer sur démarrer.
+
+
 1- TRAÎNÉE lumineuse visible et forte
 
 - Traînée lumineuse dérriere le carré plus visible
