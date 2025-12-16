@@ -48,3 +48,8 @@ flowchart TB
 
 ```
 
+flowchart TB
+    A(["Page d'accueil"]) --> B{Clic sur "Entrer dans le jeu"}
+    B L_B_C_0@--> C["Oui"] & D["Non"]
+
+
