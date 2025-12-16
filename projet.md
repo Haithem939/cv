@@ -45,7 +45,7 @@ flowchart TB
     L_B_C_0@{ animation: slow }
 ```
 
-```mermaid
+mermaid
 ---
 
 flowchart TD
