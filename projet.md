@@ -31,6 +31,7 @@ Le projet vise plusieurs objectifs :
 - Le joueur passe automatiquement au niveau suivant lorsqu’il réussit l’objectif
 - Le jeu reste fluide, lisible et agréable à utiliser
 
+Diagram de flux:
 
 
 ```mermaid
