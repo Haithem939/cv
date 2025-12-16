@@ -31,19 +31,7 @@ Le projet vise plusieurs objectifs :
 - Le joueur passe automatiquement au niveau suivant lorsqu’il réussit l’objectif
 - Le jeu reste fluide, lisible et agréable à utiliser
 
-  
-```mermaid
----
-config:
-  theme: redux
----
-flowchart TB
-    A(["Début"]) --> B{"les images sont chargées"}
-    B L_B_C_0@--> C["Oui"] & D["Non"]
 
-
-    L_B_C_0@{ animation: slow }
-```
 
 ```mermaid
 
