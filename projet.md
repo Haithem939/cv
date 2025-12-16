@@ -32,7 +32,7 @@ Le projet vise plusieurs objectifs :
 - Le jeu reste fluide, lisible et agréable à utiliser
 
 
-Diagramme de flux:
+Diagramme de flux: VEUILLEZ ACCEDER A PROJET.MD POUR VOIR LE DIAGRAMME IL EST TOTALEMENT FONCTIONNEL MAIS ICI NON J'IGNORE POURQUOI !
 
 
 ```mermaid
