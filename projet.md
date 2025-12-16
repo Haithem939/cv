@@ -46,10 +46,42 @@ flowchart TB
 ```
 
 
-```
 
-flowchart TB
-    A(["Page d'accueil"]) --> B{Clic sur "Entrer dans le jeu"}
-    B L_B_C_0@--> C["Oui"] & D["Non"]
+flowchart TD
+
+A[Page d'accueil]
+B[Entrer dans le jeu]
+C[Choix du niveau]
+D[Clic sur Démarrer]
+E[Compte à rebours 3...2...1]
+F[Début du jeu]
+G[Le carré se déplace]
+H[Clic sur le carré]
+I[Score +1]
+J{Objectif atteint ?}
+K[Niveau réussi]
+L[Temps écoulé]
+M[Game Over]
+N[Niveau suivant]
+
+A --> B
+B --> C
+C --> D
+D --> E
+E --> F
+F --> G
+G --> H
+H --> I
+I --> J
+
+J -- Oui --> K
+K --> N
+N --> C
+
+J -- Non --> G
+
+F --> L
+L --> M
+
 
 
