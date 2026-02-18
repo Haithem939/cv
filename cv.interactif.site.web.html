@@ -45,13 +45,61 @@
       padding: 20px;
       margin: 20px auto;
       width: 80%;
-      max-width: 600px;
+      max-width: 650px;
       border-radius: 10px;
       box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+      text-align: left;
     }
 
     .active {
       display: block;
+    }
+
+    /* STYLE FORMULAIRE */
+    form {
+      margin-top: 20px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+
+    textarea {
+      resize: none;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 15px;
+    }
+
+    .form-row div {
+      flex: 1;
+    }
+
+    form button {
+      width: 100%;
+      background: black;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    form button:hover {
+      background: #444;
     }
   </style>
 </head>
@@ -60,7 +108,7 @@
 
   <header>
     <h1>TOUILEB Haithem</h1>
-    <p>Si vous voulez mieux me connaitres, vous savez ce qu'il vous reste à faire !</p>
+    <p>Si vous voulez mieux me connaitre, vous savez ce qu'il vous reste à faire !</p>
   </header>
 
   <!-- MENU PRINCIPAL -->
@@ -76,15 +124,19 @@
 
   <div id="profil" class="section">
     <h2>Profil</h2>
-    <p>Je m'appelle TOUILEB Haithem, j'ai 23 ans et j'habite a paris, je suis étudiant M1 en numérique, et j'aimerai travailler dans le numérique et la communication.</p>
+    <p>
+      Je m'appelle TOUILEB Haithem, j'ai 23 ans et j'habite à Paris.
+      Je suis étudiant en M1 Numérique, et j’aimerais travailler dans le numérique
+      et la communication.
+    </p>
   </div>
 
   <div id="experience" class="section">
     <h2>Expérience</h2>
     <ul>
       <li>Carrefour Market - Employé commercial</li>
-      <li>Community manager - Festival mashup culture</li>
-       <li>Chargé de communication- stage Boulangerie le pain et toi</li>
+      <li>Community manager - Festival Mashup Culture</li>
+      <li>Chargé de communication - Stage Boulangerie Le Pain et Toi</li>
     </ul>
   </div>
 
@@ -92,8 +144,8 @@
     <h2>Sports</h2>
     <ul>
       <li>Joueur de tennis amateur</li>
-      <li>Je fais de la Musculation</li>
-       <li><b>Et fan de:</b></li>
+      <li>Musculation</li>
+      <li><b>Fan de :</b></li>
       <li>Football</li>
       <li>Basket</li>
       <li>MotoGP</li>
@@ -107,16 +159,83 @@
       <li>Montage vidéo</li>
       <li>HTML / CSS</li>
       <li>Communication digitale</li>
-      <li>Elaboration de stratégie</li>
+      <li>Élaboration de stratégie</li>
       <li>Travail d'équipe</li>
     </ul>
   </div>
 
+  <!-- CONTACT + FORMULAIRE -->
   <div id="contact" class="section">
     <h2>Contact</h2>
-    <p>Email : touilebstor2018@gmail.com</p>
-    <p>Téléphone : 0744942195</p>
-     <p>Lieu: Paris, France</p>
+
+    <p><b>Email :</b> touilebstor2018@gmail.com</p>
+    <p><b>Téléphone :</b> 0744942195</p>
+    <p><b>Lieu :</b> Paris, France</p>
+
+    <hr>
+
+    <h3>📩 Formulaire de prise de contact</h3>
+    <p>Remplissez ce formulaire pour m’envoyer un message :</p>
+
+    <form>
+
+      <!-- Nom + Prénom -->
+      <div class="form-row">
+        <div>
+          <label>Prénom :</label>
+          <input type="text" placeholder="Votre prénom" required>
+        </div>
+
+        <div>
+          <label>Nom :</label>
+          <input type="text" placeholder="Votre nom" required>
+        </div>
+      </div>
+
+      <!-- Email + Téléphone -->
+      <div class="form-row">
+        <div>
+          <label>Email :</label>
+          <input type="email" placeholder="exemple@gmail.com" required>
+        </div>
+
+        <div>
+          <label>Téléphone :</label>
+          <input type="tel" placeholder="06 00 00 00 00">
+        </div>
+      </div>
+
+      <!-- Sujet -->
+      <label>Sujet :</label>
+      <input type="text" placeholder="Objet du message..." required>
+
+      <!-- Type -->
+      <label>Type de demande :</label>
+      <select required>
+        <option value="">-- Choisir --</option>
+        <option>Stage</option>
+        <option>Emploi</option>
+        <option>Collaboration</option>
+        <option>Projet universitaire</option>
+        <option>Autre</option>
+      </select>
+
+      <!-- Message -->
+      <label>Message :</label>
+      <textarea rows="6" placeholder="Écrivez votre message ici..." required></textarea>
+
+      <!-- Case -->
+      <label>
+        <input type="checkbox" required>
+        J’accepte d’être recontacté(e).
+      </label>
+
+      <br><br>
+
+      <!-- Bouton -->
+      <button type="submit">Envoyer le message</button>
+
+    </form>
   </div>
 
   <!-- SCRIPT POUR AFFICHER UNE SEULE SECTION -->
